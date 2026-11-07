@@ -173,7 +173,12 @@ Every error has a **Details** link with the original message, handy if you ask s
 
 Offbeat is built with [Tauri 2](https://tauri.app), React and TypeScript, and uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org) and [Deno](https://deno.com), which come inside the app (licenses in [NOTICE](NOTICE)). Start at [AGENTS.md](AGENTS.md) for how the code is organized. The screenshots use *Polka! Polka! Polka!* by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0.
 
-Offbeat is not affiliated with YouTube or Google.
+## Legal
+
+- **Use it for what you have the right to keep:** your own uploads, works in the public domain or under a license that allows it (such as Creative Commons), or what the law of your country lets you copy for personal use. You are responsible for what you download and for following the terms of the services you use.
+- **Offbeat doesn't break protections.** It doesn't bypass DRM, doesn't use logins or cookies, and doesn't download encrypted or subscriber-only content. It only downloads what anyone can watch without signing in.
+- **Trademarks.** YouTube and YouTube Music are trademarks of Google LLC. Huawei, Huawei Health and HUAWEI WATCH GT are trademarks of Huawei Technologies Co., Ltd. Offbeat is an independent project, not affiliated with or endorsed by Google or Huawei; the names only say what it works with.
+- **Third-party programs.** The app ships yt-dlp (Unlicense), FFmpeg (GPL v3) and Deno (MIT) unmodified. Their licenses, and those of the libraries it uses, come inside the app in the `licenses` folder. The details, including where to find the FFmpeg source code, are in [NOTICE](NOTICE).
 
 ## License
 

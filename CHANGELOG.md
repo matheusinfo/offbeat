@@ -17,6 +17,8 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - Tema claro e escuro seguindo o sistema.
 - **Instalação sem sudo.** `npm run install-desktop` instala o AppImage para o seu usuário, com o comando `offbeat` e o Offbeat no menu de aplicativos.
 
+- **Licenças junto com o app.** Os pacotes trazem uma pasta `licenses` com as licenças do Offbeat, do yt-dlp, do FFmpeg, do Deno e de todas as bibliotecas usadas, e o [NOTICE](NOTICE) diz onde achar o código-fonte do FFmpeg empacotado. Os READMEs ganharam um aviso legal: uso permitido, nada de DRM e marcas de terceiros.
+
 ### Correções
 
 - O total da pasta no rodapé agora sobe a cada faixa concluída. Antes ficava no valor de quando o app abriu (muitas vezes 0 B) até a fila inteira terminar.
