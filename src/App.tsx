@@ -93,9 +93,10 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   const idleWithResults = isIdleWithResults(queue);
   const doneCount = summarize(queue).done;
 
-  // Folder total: at startup, when the folder changes, and when a batch ends.
+  // Folder total: at startup, when the folder changes and after every finished
+  // track. Waiting for the whole batch left it at the startup value (often
+  // 0 B) through long playlists. Reading the folder is cheap: one listing.
   useEffect(() => {
-    if (doneCount > 0 && !idleWithResults) return;
     let alive = true;
     api
       .outputDirSize()
@@ -104,7 +105,7 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
     return () => {
       alive = false;
     };
-  }, [settings.outputDir, idleWithResults, doneCount]);
+  }, [settings.outputDir, doneCount]);
 
   function submitPreview(target: string) {
     const seq = ++previewSeq.current;

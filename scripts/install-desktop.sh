@@ -41,7 +41,10 @@ fi
 mkdir -p "$APPS" "$BIN" "$(dirname "$DESKTOP")" \
   "$ICONS/256x256/apps" "$ICONS/128x128/apps" "$ICONS/32x32/apps"
 
-install -m 755 "$APPIMAGE" "$APPS/Offbeat.AppImage"
+# Copy then rename: a running Offbeat keeps its old file open and goes on
+# undisturbed; the new version starts the next time the app is opened.
+install -m 755 "$APPIMAGE" "$APPS/.Offbeat.AppImage.new"
+mv -f "$APPS/.Offbeat.AppImage.new" "$APPS/Offbeat.AppImage"
 ln -sf "$APPS/Offbeat.AppImage" "$BIN/offbeat"
 install -m 644 "$ROOT/src-tauri/icons/128x128@2x.png" "$ICONS/256x256/apps/offbeat.png"
 install -m 644 "$ROOT/src-tauri/icons/128x128.png" "$ICONS/128x128/apps/offbeat.png"

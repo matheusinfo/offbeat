@@ -16,3 +16,7 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - **Mensagens de erro claras** para bloqueio do YouTube, conteúdo privado, vídeo indisponível, falta de internet e HTTP 403, com os detalhes originais à mão.
 - Tema claro e escuro seguindo o sistema.
 - **Instalação sem sudo.** `npm run install-desktop` instala o AppImage para o seu usuário, com o comando `offbeat` e o Offbeat no menu de aplicativos.
+
+### Correções
+
+- O total da pasta no rodapé agora sobe a cada faixa concluída. Antes ficava no valor de quando o app abriu (muitas vezes 0 B) até a fila inteira terminar.
