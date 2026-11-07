@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "binaries": "bash scripts/fetch-binaries.sh",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "install-desktop": "bash scripts/install-desktop.sh"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.4",

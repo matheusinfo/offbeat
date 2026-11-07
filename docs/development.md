@@ -5,11 +5,13 @@ Galho de [AGENTS.md](../AGENTS.md). Como preparar a máquina, rodar, verificar e
 ## Preparar a máquina (Linux Mint 22 / Ubuntu 24.04)
 
 ```bash
-# Dependências do Tauri 2 (WebKitGTK 4.1, GTK 3, libsoup 3, OpenSSL)
+# Dependências do Tauri 2 (WebKitGTK 4.1, GTK 3, libsoup 3, OpenSSL).
+# Rode o apt update antes: com o índice velho, alguns pacotes dão 404.
+sudo apt update
 sudo apt install build-essential curl wget file libwebkit2gtk-4.1-dev \
   libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 
-# Rust (rustup, em ~/.cargo)
+# Rust (rustup, em ~/.cargo; o instalador põe ~/.cargo/env no ~/.profile e no ~/.bashrc)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Node 24 e as dependências do front
@@ -31,6 +33,8 @@ npm run typecheck        # tsc
 npm test                 # vitest: tests/ (lógica pura do front)
 npm run build            # tsc + vite build (dist/)
 npm run tauri build      # AppImage, .deb e .rpm em src-tauri/target/release/bundle/
+npm run tauri build -- --bundles appimage   # só o AppImage
+npm run install-desktop  # instala o AppImage para o usuário (menu + comando offbeat)
 
 cd src-tauri
 cargo test               # testes do backend (argumentos, URLs, pré-visualização)
@@ -70,7 +74,19 @@ Para testar sem tocar nas suas configurações nem na sua pasta Música, rode co
 
 ## Empacotamento
 
-`npm run tauri build` gera AppImage, .deb e .rpm. Para uso próprio, o AppImage basta.
+`npm run tauri build` gera AppImage, .deb e .rpm. Para uso próprio, o AppImage basta, instalado com `npm run install-desktop` ([scripts/install-desktop.sh](../scripts/install-desktop.sh)):
+
+| Caminho | O quê |
+| --- | --- |
+| `~/Applications/Offbeat.AppImage` | o app |
+| `~/.local/bin/offbeat` | link para o comando no PATH |
+| `~/.local/share/applications/offbeat.desktop` | entrada no menu (`StartupWMClass=offbeat`, a classe da janela do Tauri) |
+| `~/.local/share/icons/hicolor/{32x32,128x128,256x256}/apps/offbeat.png` | ícones |
+
+`bash scripts/install-desktop.sh --remove` desfaz tudo isso e mantém `~/.config/offbeat`. O AppImage precisa do `libfuse2t64`, que já vem no Mint 22.
+
+- **Tempo:** a compilação de release leva ~1,5 min; o empacotamento do AppImage leva vários minutos a mais, porque o `linuxdeploy` copia as bibliotecas do GTK/WebKit e comprime ~490 MB de sidecars. Não está travado. Na primeira vez, o Tauri baixa o `linuxdeploy` para `~/.cache/tauri/`.
+- **Tamanho:** o AppImage da 0.1.0 tem 282 MB.
 
 - Os sidecars vão juntos (~490 MB descompactados; o ffmpeg estático sozinho tem ~177 MB). O .deb da 0.1.0 ficou com 222 MB, muito acima dos ~10 MB estimados no planejamento, que não contavam os binários.
 - No .deb, o Tauri instala os sidecars em `/usr/bin` com os nomes `yt-dlp`, `ffmpeg`, `ffprobe` e `deno`, o que conflita com os pacotes do sistema de mesmo nome. Prefira o AppImage até isso ser resolvido.

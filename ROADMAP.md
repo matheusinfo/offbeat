@@ -10,6 +10,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - Perfis de tamanho (Original, Equilibrado, Econômico), capa reduzida e quadrada, SponsorBlock e total da pasta
 - YouTube Music: playlists, álbuns (`browse/…`) e links com `&list=`, com tags de álbum e número da faixa
 - Interface em pt-BR e en-US; tema claro/escuro seguindo o sistema
+- AppImage instalável para o usuário, com atalho no menu (`npm run install-desktop`)
 
 ## Pendente
 
@@ -26,3 +27,4 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 | Perfil Econômico mono | ~2 MB por música, para quem usa um fone só | Baixo |
 | Aviso de espaço: comparar o total da pasta com o espaço livre do relógio | Evitar transferências que não cabem | Baixo |
 | Release: AppImage publicado, ícone final, sidecars sem conflito no .deb | Distribuir sem compilar | Médio |
+| AppImage menor: ffmpeg só com o necessário (áudio, mp3, mjpeg) em vez do build estático completo | Hoje são 282 MB, quase tudo ffmpeg e ffprobe | Médio |

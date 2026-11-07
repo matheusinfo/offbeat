@@ -57,10 +57,13 @@ sudo apt install build-essential curl file libwebkit2gtk-4.1-dev libxdo-dev \
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh   # Rust
 npm install
 npm run binaries        # baixa yt-dlp, ffmpeg, ffprobe e Deno (conferidos por SHA-256)
-npm run tauri build     # AppImage, .deb e .rpm em src-tauri/target/release/bundle/
+npm run tauri build -- --bundles appimage
+npm run install-desktop # instala para o seu usuário, sem sudo
 ```
 
-O AppImage é o mais simples: um arquivo só, sem instalação. Detalhes em [docs/development.md](docs/development.md).
+O `install-desktop` copia o AppImage para `~/Applications/Offbeat.AppImage`, cria o comando `offbeat` (`~/.local/bin`) e põe o **Offbeat** com ícone no menu de aplicativos. Para desinstalar: `bash scripts/install-desktop.sh --remove` (as configurações ficam).
+
+O `.deb` ainda não é recomendado: ele instala `yt-dlp` e `ffmpeg` próprios em `/usr/bin`, o que conflita com os pacotes do sistema de mesmo nome. O empacotamento leva alguns minutos, quase todos comprimindo o ffmpeg embutido. Detalhes em [docs/development.md](docs/development.md).
 
 ## Privacidade
 

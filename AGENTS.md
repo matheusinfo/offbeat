@@ -25,6 +25,7 @@ npm run typecheck         # tsc
 npm test                  # vitest (tests/)
 npm run build             # tsc + vite build
 npm run tauri build       # AppImage, .deb e .rpm
+npm run install-desktop   # instala o AppImage para o usuário (menu + comando offbeat)
 cd src-tauri && cargo test && cargo clippy --all-targets -- -D warnings && cargo fmt --check
 ```
 
@@ -47,6 +48,7 @@ src-tauri/src/sidecar.rs    caminhos dos sidecars e tool_versions
 src-tauri/tauri.conf.json   janela, CSP, bundle e externalBin
 src-tauri/capabilities/     permissões do WebView (mínimas)
 scripts/fetch-binaries.sh   baixa e confere (SHA-256) os sidecars
+scripts/install-desktop.sh  instala o AppImage em ~/Applications com atalho no menu (--remove desinstala)
 ```
 
 ## Galhos da documentação
