@@ -1,0 +1,30 @@
+Offbeat
+Copyright (c) 2026 Matheus Andrade
+Licensed under the MIT License (see LICENSE), with the exceptions below.
+
+-------------------------------------------------------------------------------
+Bundled programs (sidecars)
+-------------------------------------------------------------------------------
+Release builds ship these unmodified programs next to the Offbeat binary.
+They are downloaded by scripts/fetch-binaries.sh and are not part of this
+repository.
+
+  yt-dlp    https://github.com/yt-dlp/yt-dlp
+            The Unlicense (public domain).
+
+  ffmpeg    https://github.com/yt-dlp/FFmpeg-Builds
+  ffprobe   Static "gpl" build of FFmpeg (https://ffmpeg.org), licensed under
+            the GNU General Public License v3 or later. The license text is
+            saved as src-tauri/binaries/FFMPEG-LICENSE.txt. The source code
+            and build scripts are at https://github.com/yt-dlp/FFmpeg-Builds
+            and https://git.ffmpeg.org/ffmpeg.git.
+
+  deno      https://github.com/denoland/deno
+            MIT License.
+
+-------------------------------------------------------------------------------
+Libraries
+-------------------------------------------------------------------------------
+  Tauri     https://tauri.app            MIT / Apache-2.0
+  React     https://react.dev            MIT
+  Lucide    https://lucide.dev           ISC

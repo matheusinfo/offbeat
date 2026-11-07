@@ -1,0 +1,25 @@
+[package]
+name = "offbeat"
+version = "0.1.0"
+description = "Paste a YouTube link, get a small audio file with tags and cover, ready for your watch."
+authors = ["Matheus Andrade <matheus.add12@gmail.com>"]
+license = "MIT"
+edition = "2021"
+
+[lib]
+name = "offbeat_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+libc = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = [] }
+tauri-plugin-clipboard-manager = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+tokio = { version = "1", default-features = false, features = ["process", "io-util", "time", "sync", "macros", "rt"] }
+url = "2"
