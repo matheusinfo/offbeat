@@ -1,85 +1,179 @@
-# Offbeat 🎧
+<p align="center">
+  <img src="src-tauri/icons/128x128.png" width="96" alt="Offbeat icon" />
+</p>
 
-**English** · [Português](README.pt-BR.md)
+<h1 align="center">Offbeat</h1>
 
-**Paste a YouTube or YouTube Music link, get small audio files with tags and cover art, ready for your watch.**
+<p align="center">
+  <b>Your favorite songs on your watch, in three clicks.</b><br/>
+  Paste a link from YouTube or <b>YouTube Music</b> and get small music files,
+  with name, artist and cover, ready to send to your smartwatch.
+</p>
 
-Offbeat is a small Linux desktop app made for one job: taking music to a smartwatch (it was built for a Huawei GT 5) to run or train without a phone. Paste the link of a song, playlist or album, and Offbeat saves each track as a compact MP3 or M4A, with title, artist, album, track number and a square cover. Then send the folder to the watch with the Huawei Health app.
+<p align="center">
+  <b>English</b> · <a href="README.pt-BR.md">Português</a>
+</p>
 
-Everything runs on your computer. No account, no server, no telemetry.
-
-![Offbeat downloading an album](docs/images/main-en.png)
+<p align="center">
+  <img src="docs/images/downloading-en.png" width="420" alt="Offbeat downloading an album, one song at a time" />
+</p>
 
 ---
 
-## What you can do
+## What is this?
 
-| | Feature | |
-|---|---|---|
-| 🔗 | **Paste and preview** | YouTube, YouTube Music and youtu.be links. See the cover, title, duration, number of tracks and the estimated size before downloading. Focusing the empty field pastes a link from the clipboard. |
-| 💿 | **Albums and playlists** | Each track becomes its own item in the queue, numbered (`01 - `) in the file name and in the track tag. Works with YouTube Music albums and playlists. |
-| 📶 | **Queue with progress** | Two downloads at a time, with progress, speed and time left. Cancel one track or all of them, retry the ones that failed. |
-| 🗜️ | **Small files** | Three size profiles (below). The cover is cropped square and shrunk to 300 px (~25 KB instead of 100–300 KB per track). |
-| 📁 | **Your folder** | Files go to `~/Music/Offbeat` by default (your system's music folder). The footer shows the folder total, and *Open folder* opens it when the queue ends. |
-| 🌐 | **Two languages** | Português (Brasil) and English (US), following the system or chosen in Settings. Light and dark theme follow the system. |
+Imagine you want to go for a run with music, but **without carrying your phone**. Many smartwatches can play songs on their own, but you need to put the songs on the watch first. That's where Offbeat helps:
 
-## Size profiles
+- 🔗 **You paste a link** to a song, an album or a whole playlist.
+- 🎧 **Offbeat saves each song** as a small music file in a folder on your computer.
+- ⌚ **You send that folder to your watch** (with the Huawei Health app, for example) and go!
 
-YouTube already streams audio at about 128–160 kbps. Re-encoding it as a 320 kbps MP3 only makes the file 2.5× bigger, with no gain in quality. So Offbeat either copies the original audio or encodes it once, at a similar bitrate.
+Each file comes with the **song name, the artist, the album, the track number and the cover picture**, so everything looks tidy on the watch. And the files are **small**: about 1 MB per minute of music, so a lot of songs fit.
 
-| Profile | What it does | 4-min song | Tracks per 1 GB |
-| --- | --- | --- | --- |
-| **Original** | Copies the AAC audio as M4A, no re-encoding | ~3.8 MB | ~260 |
-| **Balanced** (default) | MP3 VBR V5, ~130 kbps | ~3.9 MB | ~255 |
-| **Economy** | MP3 VBR V7, ~100 kbps | ~3.0 MB | ~340 |
+> Offbeat was made for a **Huawei Watch GT 5**, but the files are regular MP3s and work on almost any watch or music player.
 
-Original is lossless but needs a watch that plays M4A. Balanced works everywhere.
+---
 
-![Settings](docs/images/settings-en.png)
+## 🎵 Works with YouTube Music too
 
-## How to use
+Yes! Albums and playlists from **YouTube Music** work just like the ones from YouTube. These are all fine:
 
-1. Copy the link of a song, album or playlist from YouTube or YouTube Music.
-2. Click the link field in Offbeat (it pastes on its own) and press **Preview**.
-3. Check the preview and press **Download** (or **Download N tracks**).
-4. When the queue ends, press **Open folder**.
-5. Send the files to the watch with the **Huawei Health** app on your phone (Offbeat can't do this part: Huawei Health has no public API).
+| What you copied | Example |
+| --- | --- |
+| A YouTube Music **playlist** | `https://music.youtube.com/playlist?list=PL…` |
+| A YouTube Music **album** | `https://music.youtube.com/playlist?list=OLAK5uy…` |
+| The **album page** in YouTube Music | `https://music.youtube.com/browse/MPREb…` |
+| A **single song** from YouTube Music | `https://music.youtube.com/watch?v=…` |
+| A YouTube **video or playlist** | `https://www.youtube.com/watch?v=…` · `https://youtu.be/…` |
 
-**Tip:** a YouTube Music link with `&list=` in it (a song played from inside an album or playlist) brings the whole list. To get only that song, remove the `&list=…` part.
+**How to copy the link in YouTube Music:** open the album or playlist, click the **⋮** (three dots) or **Share**, then **Copy link**.
+
+Songs from YouTube Music come out especially nice: they bring the **album name** and the **square album cover**, and the songs are numbered in album order (`01 - `, `02 - `…).
+
+> 💡 **Good to know:** if you copy a song while it's playing *inside* a playlist, the link ends with `&list=…` and Offbeat brings **the whole playlist**. Don't worry, it always shows how many songs it found before downloading anything. If you only want that one song, delete the `&list=…` part of the link.
+
+---
+
+## How to use it, step by step
+
+### 1. Paste the link
+
+Copy the link of a song, album or playlist. In Offbeat, **click the link box**: if the link is already copied, it pastes itself. Then click **Preview**.
+
+<p align="center"><img src="docs/images/paste-en.png" width="380" alt="The link box with a YouTube Music link" /></p>
+
+### 2. Check what you're getting
+
+Offbeat shows the cover, the name, how many songs there are, how long they last and **how much space they will take** (about). Click **Show tracks** to see the list. If it's right, click **Download** (or **Download 11 tracks**).
+
+<p align="center"><img src="docs/images/preview-en.png" width="380" alt="Preview of an album with 11 tracks" /></p>
+
+### 3. Wait a little
+
+Each song gets its own line with a progress bar. Two songs download at the same time; the rest wait their turn. **Converting…** means the song is downloaded and is being turned into a small MP3. At the bottom, **Folder** shows how much space your music already takes.
+
+Changed your mind? The **✕** on a line cancels that song, and **Cancel all** stops everything. If a song fails, the **↻** button tries again.
+
+<p align="center"><img src="docs/images/downloading-en.png" width="380" alt="Songs downloading, some already done" /></p>
+
+### 4. Open the folder
+
+When everything is done, click **Open folder**. Your songs are there, ready.
+
+<p align="center"><img src="docs/images/done-en.png" width="380" alt="All songs done and the Open folder button" /></p>
+
+### 5. Send to the watch
+
+Copy the songs to your phone (with a USB cable, for example) and add them to the watch with your watch's app. On the **Huawei Health** app, open your watch, go to **Music** and add the songs (the menu names can change a bit between versions). Offbeat can't do this part for you: Huawei doesn't allow other apps to send music to the watch.
+
+---
+
+## ⚙️ Settings
+
+Click the **gear** at the top right.
+
+<p align="center"><img src="docs/images/settings-en.png" width="380" alt="The Settings window" /></p>
+
+- **Output folder:** where the songs are saved. By default, an `Offbeat` folder inside your **Music** folder.
+- **Size profile:** how small the files are. If you're not sure, keep **Balanced**.
+
+  | Profile | Good for | A 4-minute song | Songs in 1 GB |
+  | --- | --- | --- | --- |
+  | **Original** | Best quality, if your watch plays M4A files | ~3.8 MB | ~260 |
+  | **Balanced** ⭐ | Everyone (MP3 works everywhere) | ~3.9 MB | ~255 |
+  | **Economy** | Fitting more songs | ~3.0 MB | ~340 |
+
+- **File name:** just the song title, or *Artist - Title*. Songs from albums and playlists also get their number in front (`01 - `).
+- **Cut non-music parts (SponsorBlock):** removes talking and intros from music videos. To do this, Offbeat asks a free community service (`sponsor.ajay.app`) where those parts are. Off by default.
+- **Language:** Português (Brasil) or English (US). *System* follows your computer.
+
+---
 
 ## Install
 
-There are no ready-made packages yet. To build it on Linux Mint 22 / Ubuntu 24.04:
+### If someone gave you the `Offbeat.AppImage` file
+
+1. Put the file somewhere safe, like your **Applications** or **Home** folder.
+2. Right-click it → **Properties** → **Permissions** → tick **Allow executing file as program**.
+3. Double-click it. That's it! 🎉
+
+### If you're setting it up from the code
+
+On Linux Mint 22 or Ubuntu 24.04, in a terminal (it takes about 10 minutes the first time, mostly packing the music tools inside the app):
 
 ```bash
+sudo apt update
 sudo apt install build-essential curl file libwebkit2gtk-4.1-dev libxdo-dev \
   libssl-dev libayatana-appindicator3-dev librsvg2-dev
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh   # Rust
 npm install
-npm run binaries        # downloads yt-dlp, ffmpeg, ffprobe and Deno (checked with SHA-256)
-npm run tauri build -- --bundles appimage
-npm run install-desktop # installs for your user, no sudo
+npm run binaries                            # downloads yt-dlp, ffmpeg and Deno (checked)
+npm run tauri build -- --bundles appimage   # builds Offbeat.AppImage
+npm run install-desktop                     # puts Offbeat in the app menu (no sudo)
 ```
 
-`install-desktop` copies the AppImage to `~/Applications/Offbeat.AppImage`, adds the `offbeat` command (`~/.local/bin`) and an **Offbeat** entry with its icon to the applications menu. To uninstall: `bash scripts/install-desktop.sh --remove` (your settings stay).
+After that, open **Offbeat** from the applications menu. To remove it: `bash scripts/install-desktop.sh --remove`. More details in [docs/development.md](docs/development.md).
 
-The `.deb` is not recommended yet: it installs its own `yt-dlp` and `ffmpeg` in `/usr/bin`, which clashes with the system packages of the same name. Packaging takes a few minutes, mostly compressing the bundled ffmpeg. Details in [docs/development.md](docs/development.md).
+---
 
-## Privacy
+## Questions
 
-- Offbeat makes no network calls of its own. Only yt-dlp talks to YouTube, and to `sponsor.ajay.app` if you turn on **SponsorBlock** in Settings (it cuts the non-music parts of music videos).
-- Settings live in `~/.config/offbeat/settings.json`. Temporary files go to `~/.cache/offbeat/tmp/` and are deleted after each download.
-- No telemetry, crash reports or account.
+**Is it free? Do I need an account?**
+Free, no account, no sign-up, no ads.
 
-## Legal note
+**Does it send my data anywhere?**
+No. Offbeat runs on your computer. The only thing that goes to the internet is the download itself, from YouTube (and SponsorBlock, if you turn it on). No tracking of any kind.
 
-Downloading from YouTube outside the official apps goes against YouTube's Terms of Service, even for Premium subscribers. **You are responsible for what you download.** Offbeat is not affiliated with YouTube or Google.
+**Do I need YouTube Premium?**
+No. But note that YouTube's rules don't allow downloading outside its own apps, even for Premium users. **You are responsible for what you download.** Prefer music you have the right to keep, like your own uploads or songs with a free license (Creative Commons).
 
-## Built with
+**Can I download private playlists or my "Liked music"?**
+Not yet: those need a login, and Offbeat only downloads public content for now.
 
-[Tauri 2](https://tauri.app), React and TypeScript, with [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org) and [Deno](https://deno.com) bundled as sidecars. See [NOTICE](NOTICE) for their licenses.
+**How much music fits on my watch?**
+With the Balanced profile, about **255 songs per GB**. The footer shows the folder size so you can compare it with the free space your watch app shows.
 
-For developers and AI agents: start at [AGENTS.md](AGENTS.md).
+---
+
+## If something goes wrong
+
+| Message | What to do |
+| --- | --- |
+| *YouTube is blocking anonymous access* | Wait a while and try again. If it keeps happening, Offbeat needs a newer yt-dlp (ask whoever installed it). |
+| *This content requires sign-in* | The video or playlist is private or for members only. |
+| *Video unavailable* | It was removed, or it's blocked in your country. |
+| *Cannot reach YouTube* | Check your internet. |
+| *YouTube refused the download (HTTP 403)* | Offbeat needs a newer yt-dlp. |
+
+Every error has a **Details** link with the original message, handy if you ask someone for help.
+
+---
+
+## For the curious and for developers
+
+Offbeat is built with [Tauri 2](https://tauri.app), React and TypeScript, and uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org) and [Deno](https://deno.com), which come inside the app (licenses in [NOTICE](NOTICE)). Start at [AGENTS.md](AGENTS.md) for how the code is organized. The screenshots use *Polka! Polka! Polka!* by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0.
+
+Offbeat is not affiliated with YouTube or Google.
 
 ## License
 

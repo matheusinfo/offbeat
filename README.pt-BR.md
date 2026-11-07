@@ -1,85 +1,179 @@
-# Offbeat 🎧
+<p align="center">
+  <img src="src-tauri/icons/128x128.png" width="96" alt="Ícone do Offbeat" />
+</p>
 
-**Português** · [English](README.md)
+<h1 align="center">Offbeat</h1>
 
-**Cole um link do YouTube ou do YouTube Music e receba arquivos de áudio pequenos, com tags e capa, prontos para o relógio.**
+<p align="center">
+  <b>Suas músicas favoritas no relógio, em três cliques.</b><br/>
+  Cole um link do YouTube ou do <b>YouTube Music</b> e receba arquivos de música pequenos,
+  com nome, artista e capa, prontos para mandar para o seu smartwatch.
+</p>
 
-O Offbeat é um app desktop pequeno para Linux, feito para uma tarefa: levar música para o relógio (ele foi pensado para o Huawei GT 5) e correr ou treinar sem o celular. Cole o link de uma música, playlist ou álbum, e o Offbeat salva cada faixa como um MP3 ou M4A compacto, com título, artista, álbum, número da faixa e capa quadrada. Depois é só mandar a pasta para o relógio pelo app Huawei Health.
+<p align="center">
+  <b>Português</b> · <a href="README.md">English</a>
+</p>
 
-Tudo roda no seu computador. Sem conta, sem servidor, sem telemetria.
-
-![Offbeat baixando um álbum](docs/images/main-pt.png)
+<p align="center">
+  <img src="docs/images/downloading-pt.png" width="420" alt="Offbeat baixando um álbum, uma música por vez" />
+</p>
 
 ---
 
-## O que dá para fazer
+## O que é isso?
 
-| | Recurso | |
-|---|---|---|
-| 🔗 | **Colar e visualizar** | Links do YouTube, YouTube Music e youtu.be. Veja capa, título, duração, número de faixas e o tamanho estimado antes de baixar. Ao clicar no campo vazio, o link da área de transferência é colado sozinho. |
-| 💿 | **Álbuns e playlists** | Cada faixa vira um item da fila, numerada (`01 - `) no nome do arquivo e na tag de faixa. Funciona com álbuns e playlists do YouTube Music. |
-| 📶 | **Fila com progresso** | Dois downloads por vez, com progresso, velocidade e tempo restante. Cancele uma faixa ou todas, e tente de novo as que falharem. |
-| 🗜️ | **Arquivos pequenos** | Três perfis de tamanho (abaixo). A capa é recortada quadrada e reduzida para 300 px (~25 KB em vez de 100–300 KB por faixa). |
-| 📁 | **Sua pasta** | Os arquivos vão para `~/Música/Offbeat` por padrão (a pasta de música do sistema). O rodapé mostra o total da pasta, e *Abrir pasta* aparece quando a fila termina. |
-| 🌐 | **Dois idiomas** | Português (Brasil) e English (US), seguindo o sistema ou escolhido nas Configurações. Tema claro e escuro seguem o sistema. |
+Imagine que você quer sair para correr com música, mas **sem levar o celular**. Muitos relógios inteligentes tocam música sozinhos, mas antes é preciso colocar as músicas neles. É aí que o Offbeat ajuda:
 
-## Perfis de tamanho
+- 🔗 **Você cola um link** de uma música, de um álbum ou de uma playlist inteira.
+- 🎧 **O Offbeat salva cada música** como um arquivo pequeno numa pasta do seu computador.
+- ⌚ **Você manda essa pasta para o relógio** (pelo app Huawei Health, por exemplo) e pronto!
 
-O YouTube já entrega o áudio a cerca de 128–160 kbps. Converter isso para MP3 de 320 kbps só deixa o arquivo 2,5× maior, sem ganhar qualidade. Por isso o Offbeat copia o áudio original ou codifica uma única vez, numa taxa parecida.
+Cada arquivo vem com **nome da música, artista, álbum, número da faixa e a capa**, então tudo aparece organizado no relógio. E os arquivos são **pequenos**: cerca de 1 MB por minuto de música, então cabe muita coisa.
 
-| Perfil | O que faz | Música de 4 min | Faixas por 1 GB |
-| --- | --- | --- | --- |
-| **Original** | Copia o áudio AAC como M4A, sem recodificar | ~3,8 MB | ~260 |
-| **Equilibrado** (padrão) | MP3 VBR V5, ~130 kbps | ~3,9 MB | ~255 |
-| **Econômico** | MP3 VBR V7, ~100 kbps | ~3,0 MB | ~340 |
+> O Offbeat foi feito para um **Huawei Watch GT 5**, mas os arquivos são MP3 comuns e funcionam em quase qualquer relógio ou tocador de música.
 
-O Original não perde nada, mas exige um relógio que toque M4A. O Equilibrado funciona em qualquer um.
+---
 
-![Configurações](docs/images/settings-pt.png)
+## 🎵 Funciona com o YouTube Music também
 
-## Como usar
+Sim! Álbuns e playlists do **YouTube Music** funcionam igualzinho aos do YouTube. Todos estes servem:
 
-1. Copie o link de uma música, álbum ou playlist do YouTube ou do YouTube Music.
-2. Clique no campo de link do Offbeat (ele cola sozinho) e aperte **Visualizar**.
-3. Confira a pré-visualização e aperte **Baixar** (ou **Baixar N faixas**).
-4. Quando a fila terminar, aperte **Abrir pasta**.
-5. Mande os arquivos para o relógio pelo app **Huawei Health** no celular (essa parte o Offbeat não faz: o Huawei Health não tem API pública).
+| O que você copiou | Exemplo |
+| --- | --- |
+| Uma **playlist** do YouTube Music | `https://music.youtube.com/playlist?list=PL…` |
+| Um **álbum** do YouTube Music | `https://music.youtube.com/playlist?list=OLAK5uy…` |
+| A **página do álbum** no YouTube Music | `https://music.youtube.com/browse/MPREb…` |
+| **Uma música** do YouTube Music | `https://music.youtube.com/watch?v=…` |
+| Um **vídeo ou playlist** do YouTube | `https://www.youtube.com/watch?v=…` · `https://youtu.be/…` |
 
-**Dica:** um link do YouTube Music com `&list=` (uma música tocada de dentro de um álbum ou playlist) traz a lista inteira. Para baixar só aquela música, apague o trecho `&list=…`.
+**Como copiar o link no YouTube Music:** abra o álbum ou a playlist, clique nos **⋮** (três pontinhos) ou em **Compartilhar** e depois em **Copiar link**.
+
+As músicas do YouTube Music saem especialmente caprichadas: vêm com o **nome do álbum** e a **capa quadrada do álbum**, e ficam numeradas na ordem do disco (`01 - `, `02 - `…).
+
+> 💡 **Bom saber:** se você copiar uma música enquanto ela toca *dentro* de uma playlist, o link termina com `&list=…` e o Offbeat traz **a playlist inteira**. Fique tranquilo: ele sempre mostra quantas músicas encontrou antes de baixar qualquer coisa. Se quiser só aquela música, apague o trecho `&list=…` do link.
+
+---
+
+## Como usar, passo a passo
+
+### 1. Cole o link
+
+Copie o link de uma música, álbum ou playlist. No Offbeat, **clique na caixa do link**: se o link já estiver copiado, ele se cola sozinho. Depois clique em **Visualizar**.
+
+<p align="center"><img src="docs/images/paste-pt.png" width="380" alt="A caixa do link com um link do YouTube Music" /></p>
+
+### 2. Confira o que vai baixar
+
+O Offbeat mostra a capa, o nome, quantas músicas são, quanto tempo duram e **quanto espaço vão ocupar** (mais ou menos). Clique em **Ver faixas** para ver a lista. Se estiver certo, clique em **Baixar** (ou **Baixar 11 faixas**).
+
+<p align="center"><img src="docs/images/preview-pt.png" width="380" alt="Pré-visualização de um álbum com 11 faixas" /></p>
+
+### 3. Espere um pouquinho
+
+Cada música ganha uma linha com uma barra de progresso. Duas músicas baixam ao mesmo tempo; as outras esperam a vez. **Convertendo…** quer dizer que a música já baixou e está virando um MP3 pequeno. Embaixo, **Pasta** mostra quanto espaço suas músicas já ocupam.
+
+Mudou de ideia? O **✕** de uma linha cancela aquela música, e **Cancelar tudo** para tudo. Se uma música falhar, o botão **↻** tenta de novo.
+
+<p align="center"><img src="docs/images/downloading-pt.png" width="380" alt="Músicas baixando, algumas já concluídas" /></p>
+
+### 4. Abra a pasta
+
+Quando tudo terminar, clique em **Abrir pasta**. Suas músicas estão lá, prontas.
+
+<p align="center"><img src="docs/images/done-pt.png" width="380" alt="Todas as músicas concluídas e o botão Abrir pasta" /></p>
+
+### 5. Mande para o relógio
+
+Copie as músicas para o celular (com um cabo USB, por exemplo) e adicione-as ao relógio pelo app do relógio. No **Huawei Health**, abra o seu relógio, vá em **Música** e adicione as músicas (os nomes dos menus podem mudar um pouco entre versões). Essa parte o Offbeat não consegue fazer por você: a Huawei não deixa outros apps mandarem música para o relógio.
+
+---
+
+## ⚙️ Configurações
+
+Clique na **engrenagem** no canto de cima, à direita.
+
+<p align="center"><img src="docs/images/settings-pt.png" width="380" alt="A janela de Configurações" /></p>
+
+- **Pasta de destino:** onde as músicas são salvas. Por padrão, uma pasta `Offbeat` dentro da sua pasta de **Música**.
+- **Perfil de tamanho:** o quanto os arquivos ficam pequenos. Na dúvida, deixe em **Equilibrado**.
+
+  | Perfil | Bom para | Música de 4 min | Músicas em 1 GB |
+  | --- | --- | --- | --- |
+  | **Original** | Melhor qualidade, se o seu relógio toca arquivos M4A | ~3,8 MB | ~260 |
+  | **Equilibrado** ⭐ | Todo mundo (MP3 funciona em qualquer lugar) | ~3,9 MB | ~255 |
+  | **Econômico** | Caber mais músicas | ~3,0 MB | ~340 |
+
+- **Nome do arquivo:** só o título da música, ou *Artista - Título*. Músicas de álbuns e playlists também ganham o número na frente (`01 - `).
+- **Cortar trechos sem música (SponsorBlock):** tira conversas e introduções dos clipes. Para isso, o Offbeat pergunta a um serviço gratuito da comunidade (`sponsor.ajay.app`) onde ficam esses trechos. Vem desligado.
+- **Idioma:** Português (Brasil) ou English (US). *Sistema* segue o seu computador.
+
+---
 
 ## Instalar
 
-Ainda não há pacotes prontos. Para gerar no Linux Mint 22 / Ubuntu 24.04:
+### Se alguém te passou o arquivo `Offbeat.AppImage`
+
+1. Guarde o arquivo num lugar seguro, como a pasta **Aplicativos** ou a sua **Pasta pessoal**.
+2. Clique com o botão direito → **Propriedades** → **Permissões** → marque **Permitir execução do arquivo como programa**.
+3. Clique duas vezes nele. Pronto! 🎉
+
+### Se você vai montar a partir do código
+
+No Linux Mint 22 ou Ubuntu 24.04, num terminal (leva uns 10 minutos na primeira vez, quase tudo empacotando as ferramentas de música dentro do app):
 
 ```bash
+sudo apt update
 sudo apt install build-essential curl file libwebkit2gtk-4.1-dev libxdo-dev \
   libssl-dev libayatana-appindicator3-dev librsvg2-dev
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh   # Rust
 npm install
-npm run binaries        # baixa yt-dlp, ffmpeg, ffprobe e Deno (conferidos por SHA-256)
-npm run tauri build -- --bundles appimage
-npm run install-desktop # instala para o seu usuário, sem sudo
+npm run binaries                            # baixa yt-dlp, ffmpeg e Deno (conferidos)
+npm run tauri build -- --bundles appimage   # gera o Offbeat.AppImage
+npm run install-desktop                     # põe o Offbeat no menu de aplicativos (sem sudo)
 ```
 
-O `install-desktop` copia o AppImage para `~/Applications/Offbeat.AppImage`, cria o comando `offbeat` (`~/.local/bin`) e põe o **Offbeat** com ícone no menu de aplicativos. Para desinstalar: `bash scripts/install-desktop.sh --remove` (as configurações ficam).
+Depois, abra o **Offbeat** pelo menu de aplicativos. Para remover: `bash scripts/install-desktop.sh --remove`. Mais detalhes em [docs/development.md](docs/development.md).
 
-O `.deb` ainda não é recomendado: ele instala `yt-dlp` e `ffmpeg` próprios em `/usr/bin`, o que conflita com os pacotes do sistema de mesmo nome. O empacotamento leva alguns minutos, quase todos comprimindo o ffmpeg embutido. Detalhes em [docs/development.md](docs/development.md).
+---
 
-## Privacidade
+## Dúvidas
 
-- O Offbeat não faz nenhuma chamada de rede própria. Só o yt-dlp acessa o YouTube, e o `sponsor.ajay.app` se você ligar o **SponsorBlock** nas Configurações (ele corta as partes sem música dos clipes).
-- As configurações ficam em `~/.config/offbeat/settings.json`. Os arquivos temporários vão para `~/.cache/offbeat/tmp/` e são apagados após cada download.
-- Sem telemetria, relatório de falhas ou conta.
+**É de graça? Preciso de conta?**
+De graça, sem conta, sem cadastro e sem anúncios.
 
-## Aviso legal
+**Ele manda meus dados para algum lugar?**
+Não. O Offbeat roda no seu computador. A única coisa que vai para a internet é o próprio download, do YouTube (e do SponsorBlock, se você ligar). Nenhum tipo de rastreamento.
 
-Baixar do YouTube fora dos apps oficiais viola os Termos de Serviço do YouTube, mesmo para assinantes Premium. **Você é responsável pelo que baixa.** O Offbeat não tem relação com o YouTube nem com o Google.
+**Preciso do YouTube Premium?**
+Não. Mas saiba que as regras do YouTube não permitem baixar fora dos apps dele, nem para assinantes Premium. **Você é responsável pelo que baixa.** Prefira músicas que você tem o direito de guardar, como envios seus ou músicas com licença livre (Creative Commons).
 
-## Feito com
+**Dá para baixar playlists privadas ou as "Músicas curtidas"?**
+Ainda não: elas exigem login, e por enquanto o Offbeat só baixa conteúdo público.
 
-[Tauri 2](https://tauri.app), React e TypeScript, com [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org) e [Deno](https://deno.com) empacotados como sidecars. Veja as licenças deles em [NOTICE](NOTICE).
+**Quanta música cabe no meu relógio?**
+No perfil Equilibrado, cerca de **255 músicas por GB**. O rodapé mostra o tamanho da pasta, para você comparar com o espaço livre que o app do relógio mostra.
 
-Para desenvolvedores e agentes de IA: comece pelo [AGENTS.md](AGENTS.md).
+---
+
+## Se algo der errado
+
+| Mensagem | O que fazer |
+| --- | --- |
+| *O YouTube está bloqueando o acesso anônimo* | Espere um pouco e tente de novo. Se continuar, o Offbeat precisa de um yt-dlp mais novo (fale com quem instalou). |
+| *Este conteúdo exige login* | O vídeo ou a playlist é privado ou só para membros. |
+| *Vídeo indisponível* | Foi removido ou está bloqueado no seu país. |
+| *Sem conexão com o YouTube* | Confira a sua internet. |
+| *O YouTube recusou o download (HTTP 403)* | O Offbeat precisa de um yt-dlp mais novo. |
+
+Todo erro tem um link **Detalhes** com a mensagem original, útil se você pedir ajuda a alguém.
+
+---
+
+## Para curiosos e desenvolvedores
+
+O Offbeat é feito com [Tauri 2](https://tauri.app), React e TypeScript, e usa o [yt-dlp](https://github.com/yt-dlp/yt-dlp), o [FFmpeg](https://ffmpeg.org) e o [Deno](https://deno.com), que vão dentro do app (licenças em [NOTICE](NOTICE)). Comece pelo [AGENTS.md](AGENTS.md) para entender como o código é organizado. As capturas de tela usam *Polka! Polka! Polka!*, de Kevin MacLeod (incompetech.com), licenciado em Creative Commons: By Attribution 4.0.
+
+O Offbeat não tem relação com o YouTube nem com o Google.
 
 ## Licença
 

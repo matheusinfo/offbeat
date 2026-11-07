@@ -41,12 +41,28 @@ Uma tela só, em uma coluna (janela de 560×720, mínimo 420 de largura):
 
 ## Capturas de tela
 
-As capturas dos READMEs ficam em `docs/images/`: `main-pt.png`, `settings-pt.png` (README.pt-BR) e `main-en.png`, `settings-en.png` (README). Para refazer:
+Os READMEs são um passo a passo ilustrado. As capturas ficam em `docs/images/`, uma por passo e idioma (`-en` no README, `-pt` no README.pt-BR):
 
-1. Rode o app isolado, com configuração e saída temporárias: `XDG_CONFIG_HOME=/tmp/ob-config XDG_CACHE_HOME=/tmp/ob-cache npm run tauri dev`, e escolha uma pasta de saída temporária nas Configurações (ou crie `settings.json` antes).
-2. Use o tema do sistema escuro, a janela no tamanho padrão (560×720) e conteúdo de demonstração (um álbum público), sem dados pessoais.
-3. Capture só a janela e reduza para 128 cores, o que deixa cada PNG com ~27 KB:
+| Arquivo | Passo |
+| --- | --- |
+| `paste-{en,pt}.png` | link do YouTube Music colado, pasta vazia (0 B) |
+| `preview-{en,pt}.png` | pré-visualização do álbum |
+| `downloading-{en,pt}.png` | fila no meio: concluídas, convertendo, iniciando, na fila e total da pasta subindo (também é a imagem do topo) |
+| `done-{en,pt}.png` | tudo concluído, com "Abrir pasta" |
+| `settings-{en,pt}.png` | Configurações |
+
+Regras, porque o repositório é público:
+
+- **Só música com licença livre.** Use o álbum *Polka! Polka! Polka!* de Kevin MacLeod (CC BY 4.0): `https://music.youtube.com/playlist?list=OLAK5uy_ldvBO5kQR_s6ScaW0-UoV7Nn9kmZHMyog`, com o crédito no fim dos READMEs. Nada de álbum comercial (capa e nome expõem o repositório a DMCA).
+- **Nenhum caminho pessoal.** Pasta de saída `/tmp/Offbeat`: aparece nas Configurações.
+- Tema escuro do sistema, janela no tamanho padrão (560×720), cursor fora da janela, nenhuma outra janela por cima.
+
+Como refazer:
+
+1. Rode uma instância isolada, que não toca nas configurações nem na pasta de música reais (pode rodar junto com o app instalado): `npm run dev` e, em outro terminal, `XDG_CONFIG_HOME=/tmp/ob-config XDG_CACHE_HOME=/tmp/ob-cache WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9223 ./src-tauri/target/debug/offbeat`, com `/tmp/ob-config/offbeat/settings.json` apontando `outputDir` para `/tmp/Offbeat` e `language` para o idioma da rodada.
+2. Siga o fluxo (colar → Visualizar → Baixar 11 faixas → esperar → Configurações) e capture cada passo. A captura do meio vale quando há ≥ 3 concluídas e ainda há downloads. Antes da rodada do outro idioma, apague os `.mp3` de `/tmp/Offbeat`, senão o yt-dlp pula as faixas e não há progresso para fotografar.
+3. Capture só a janela com `ffmpeg -f x11grab` (o `xwd` sai em branco com o WebKit; veja [recipes.md](recipes.md#testar-a-interface-de-verdade)) e reduza para 128 cores, o que deixa cada PNG com 10–28 KB:
 
 ```bash
-ffmpeg -i captura.png -vf "split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=none" docs/images/main-pt.png
+ffmpeg -i captura.png -vf "split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=none" docs/images/downloading-pt.png
 ```
