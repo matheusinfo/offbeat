@@ -15,6 +15,14 @@ Offbeat é um app desktop para Linux (Tauri 2 + React 19 + TypeScript, backend e
 3. **Verifique antes de commitar**: os comandos de [docs/development.md](docs/development.md#verificação-obrigatória-antes-do-commit), sem erros nem warnings novos. Lógica nova testável ganha teste (`tests/` no front, `#[cfg(test)]` no Rust).
 4. Mudança visual ou de fluxo pede teste no app (`npm run tauri dev`) com um vídeo curto e uma playlist pequena. Se não deu para testar, diga isso claramente em vez de afirmar que funciona.
 5. Não quebre a promessa de privacidade: nenhuma chamada de rede própria do app. Os únicos acessos são os do yt-dlp ao YouTube (e ao SponsorBlock, quando o usuário liga). Veja [docs/architecture.md](docs/architecture.md#segurança-e-privacidade).
+6. **O usuário usa o app instalado** (AppImage em `~/Applications`, atalho no menu). Depois de mudanças que ele vai usar, atualize a instalação ([docs/recipes.md](docs/recipes.md#atualizar-o-app-instalado)) e **avise antes que o empacotamento leva cerca de 10 minutos**, para não parecer travado.
+7. O agente não tem `sudo`: peça ao usuário para rodar esses comandos com `!` no prompt ([docs/recipes.md](docs/recipes.md#comandos-que-precisam-de-sudo)).
+
+## Estado atual
+
+- **Versão 0.1.0** (MVP do planejamento + YouTube Music), instalada como AppImage na máquina do usuário. Testada no app com vídeo, álbum do YouTube Music, cancelamento, erros e troca de idioma.
+- **Pendência principal:** o teste no relógio (o GT 5 toca M4A?). Ele decide o perfil padrão; o que fazer com o resultado está em [docs/recipes.md](docs/recipes.md#depois-do-teste-no-relógio-m4a-no-gt-5).
+- Próximas ideias, em ordem, no [ROADMAP.md](ROADMAP.md).
 
 ## Comandos
 
@@ -59,6 +67,7 @@ scripts/install-desktop.sh  instala o AppImage em ~/Applications com atalho no m
 | [docs/ytdlp.md](docs/ytdlp.md) | mudar argumentos do yt-dlp, perfis de tamanho, capa/tags, formato das linhas de progresso, erros ou suporte a YouTube Music |
 | [docs/ui-conventions.md](docs/ui-conventions.md) | criar ou alterar componentes, textos (i18n), cores, acessibilidade ou capturas de tela |
 | [docs/development.md](docs/development.md) | preparar a máquina, rodar, verificar, empacotar ou trocar o ícone |
+| [docs/recipes.md](docs/recipes.md) | seguir o passo a passo de tarefas comuns: atualizar o app instalado, agir após o teste no relógio, atualizar o yt-dlp, novo texto, novo comando, testar a interface |
 | [docs/planning.md](docs/planning.md) | entender a motivação e as decisões originais (documento de planejamento, não é atualizado) |
 
 ## Convenções essenciais
