@@ -2,7 +2,7 @@
 name = "offbeat"
 version = "0.1.0"
 description = "Paste a YouTube link, get a small audio file with tags and cover, ready for your watch."
-authors = ["Matheus Andrade <matheus.add12@gmail.com>"]
+authors = ["Matheus Andrade <48860569+matheusinfo@users.noreply.github.com>"]
 license = "MIT"
 edition = "2021"
 

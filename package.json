@@ -4,10 +4,7 @@
   "version": "0.1.0",
   "description": "Offbeat: paste a YouTube link, get a small audio file with tags and cover, ready for your watch.",
   "license": "MIT",
-  "author": {
-    "name": "Matheus Andrade",
-    "email": "matheus.add12@gmail.com"
-  },
+  "author": "Matheus Andrade",
   "homepage": "https://matheusinfo.dev",
   "type": "module",
   "scripts": {
