@@ -2,6 +2,8 @@
 
 Documentação de planejamento · 6 de novembro de 2026
 
+> Documento original de planejamento, mantido como registro e não atualizado. O estado atual está no [ROADMAP](../ROADMAP.md) e as decisões que mudaram na implementação em [architecture.md](architecture.md#decisões-que-mudaram-em-relação-ao-planejamento).
+
 ## Visão geral
 
 Um app desktop pequeno para Linux: você cola a URL de uma música ou playlist, ele chama o yt-dlp e salva o áudio com metadados numa pasta local, pronta para ir ao relógio pelo Huawei Health. Tudo roda na máquina, sem servidor, conta ou telemetria.
@@ -41,7 +43,7 @@ Tamanhos aproximados, de memória, sem medição.
 
 ## Arquitetura
 
-![Tudo roda no seu PC; só a ida ao relógio é manual](docs/arquitetura.png)
+![Tudo roda no seu PC; só a ida ao relógio é manual](arquitetura.png)
 
 ```mermaid
 flowchart LR
