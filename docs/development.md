@@ -21,7 +21,7 @@ npm install
 npm run binaries
 ```
 
-`npm run binaries` roda [scripts/fetch-binaries.sh](../scripts/fetch-binaries.sh), que baixa os releases mais recentes para `src-tauri/binaries/` com o sufixo da plataforma (`yt-dlp-x86_64-unknown-linux-gnu` etc.). A pasta é ignorada pelo git. Binários já presentes são mantidos. Use `--force` para baixar tudo de novo, por exemplo quando o YouTube quebrar o yt-dlp atual.
+`npm run binaries` roda [scripts/fetch-binaries.sh](../scripts/fetch-binaries.sh), que baixa os releases mais recentes para `src-tauri/binaries/` com o sufixo da plataforma (`yt-dlp-x86_64-unknown-linux-gnu` etc.). A pasta é ignorada pelo git. Binários já presentes são mantidos. Ele também salva as licenças das versões instaladas e gera o `THIRD-PARTY-LICENSES.txt` (veja [Empacotamento](#empacotamento)). Use `--force` para baixar tudo de novo, por exemplo quando o YouTube quebrar o yt-dlp atual.
 
 O `tauri-build` falha se algum arquivo de `externalBin` (em `tauri.conf.json`) faltar, então rode o script antes do primeiro `cargo build`.
 
@@ -90,7 +90,24 @@ Para testar sem tocar nas suas configurações nem na sua pasta Música, rode co
 
 - Os sidecars vão juntos (~490 MB descompactados; o ffmpeg estático sozinho tem ~177 MB). O .deb da 0.1.0 ficou com 222 MB, muito acima dos ~10 MB estimados no planejamento, que não contavam os binários.
 - No .deb, o Tauri instala os sidecars em `/usr/bin` com os nomes `yt-dlp`, `ffmpeg`, `ffprobe` e `deno`, o que conflita com os pacotes do sistema de mesmo nome. Prefira o AppImage até isso ser resolvido.
-- O ffmpeg é GPL: se publicar o app, inclua `src-tauri/binaries/FFMPEG-LICENSE.txt` e o link do código-fonte (veja [NOTICE](../NOTICE)).
+- **Licenças nos pacotes:** `bundle.resources` do [tauri.conf.json](../src-tauri/tauri.conf.json) instala `LICENSE`, `NOTICE` e os textos de `src-tauri/binaries/` (`THIRD-PARTY-LICENSES.txt`, `YT-DLP-*`, `FFMPEG-LICENSE.txt`, `FFMPEG-SOURCE.txt`, `DENO-LICENSE.md`) na pasta `licenses/` dos recursos do app. O `npm run binaries` baixa e gera esses arquivos; sem eles nem o `cargo build` passa. O `beforeBuildCommand` roda `npm run licenses` para refazer o `THIRD-PARTY-LICENSES.txt` a partir do `Cargo.lock` e do `package-lock.json`.
+
+### Publicar uma release com binários
+
+Subir só o código não distribui nenhum binário e não tem obrigação extra. Ao anexar AppImage, .deb ou .rpm a uma release do GitHub, o app passa a distribuir o ffmpeg (GPL) e as bibliotecas do sistema (LGPL), então:
+
+1. Rode `npm run binaries -- --force` e `npm run tauri build` na mesma hora, para as licenças e o `FFMPEG-SOURCE.txt` baterem com os binários.
+2. Anexe à mesma release o código-fonte do ffmpeg empacotado (a GPL pede que ele fique disponível enquanto o binário estiver):
+
+```bash
+C=$(sed -n 's#.*ffmpeg.git/commit/##p' src-tauri/binaries/FFMPEG-SOURCE.txt)
+git clone --filter=blob:none https://git.ffmpeg.org/ffmpeg.git /tmp/ffmpeg-src
+git -C /tmp/ffmpeg-src archive --prefix="ffmpeg-$C/" "$C" | xz > "ffmpeg-source-$C.tar.xz"
+git clone --depth 1 https://github.com/yt-dlp/FFmpeg-Builds /tmp/ffmpeg-builds
+tar -C /tmp -cJf ffmpeg-builds-scripts.tar.xz --exclude=.git ffmpeg-builds
+```
+
+3. Confira que `licenses/` aparece dentro do pacote (no .deb, em `/usr/lib/Offbeat/licenses/`; no AppImage, extraia com `--appimage-extract` e procure a pasta `licenses`).
 
 ## Ícone
 

@@ -7,24 +7,62 @@ Bundled programs (sidecars)
 -------------------------------------------------------------------------------
 Release builds ship these unmodified programs next to the Offbeat binary.
 They are downloaded by scripts/fetch-binaries.sh and are not part of this
-repository.
+repository. Their license texts are installed with the app, in the
+"licenses" folder of its resources.
 
   yt-dlp    https://github.com/yt-dlp/yt-dlp
-            The Unlicense (public domain).
+            The Unlicense (public domain). The standalone build also
+            contains Python and other libraries, listed with their licenses
+            in YT-DLP-THIRD-PARTY-LICENSES.txt.
 
   ffmpeg    https://github.com/yt-dlp/FFmpeg-Builds
   ffprobe   Static "gpl" build of FFmpeg (https://ffmpeg.org), licensed under
-            the GNU General Public License v3 or later. The license text is
-            saved as src-tauri/binaries/FFMPEG-LICENSE.txt. The source code
-            and build scripts are at https://github.com/yt-dlp/FFmpeg-Builds
-            and https://git.ffmpeg.org/ffmpeg.git.
+            the GNU General Public License v3 or later (FFMPEG-LICENSE.txt).
+            FFMPEG-SOURCE.txt names the exact FFmpeg commit of the build.
+            Each Offbeat release that ships binaries also attaches the
+            corresponding source (ffmpeg-source-*.tar.xz).
 
   deno      https://github.com/denoland/deno
-            MIT License.
+            MIT License (DENO-LICENSE.md).
 
 -------------------------------------------------------------------------------
 Libraries
 -------------------------------------------------------------------------------
-  Tauri     https://tauri.app            MIT / Apache-2.0
-  React     https://react.dev            MIT
-  Lucide    https://lucide.dev           ISC
+Offbeat is built with Tauri (MIT / Apache-2.0), React (MIT) and Lucide (ISC),
+among other Rust crates and npm packages. THIRD-PARTY-LICENSES.txt, generated
+by scripts/third-party-licenses.mjs, lists each one with its license text.
+
+A few crates (cssparser, selectors, dtoa-short, option-ext) are under the
+Mozilla Public License 2.0. They are used unmodified, and their source is
+available at https://crates.io and in the repositories listed in that file.
+
+The AppImage also carries system libraries from Ubuntu (GTK, WebKitGTK, GLib
+and their dependencies, mostly LGPL). They are unmodified, and their source is
+available from the Ubuntu archive (https://packages.ubuntu.com, or
+`apt-get source <package>`).
+
+-------------------------------------------------------------------------------
+Online services
+-------------------------------------------------------------------------------
+Offbeat makes no network requests of its own. yt-dlp contacts YouTube to read
+and download what the user asks for. When the user turns on the option, it
+also queries SponsorBlock (https://sponsor.ajay.app), whose data is licensed
+under CC BY-NC-SA 4.0.
+
+-------------------------------------------------------------------------------
+Trademarks
+-------------------------------------------------------------------------------
+YouTube and YouTube Music are trademarks of Google LLC. Huawei, Huawei Health
+and HUAWEI WATCH GT are trademarks of Huawei Technologies Co., Ltd. Offbeat is
+an independent project, not affiliated with, endorsed or sponsored by Google
+or Huawei. The names are used only to describe what the app works with.
+
+-------------------------------------------------------------------------------
+Use
+-------------------------------------------------------------------------------
+Offbeat does not bypass DRM or any other copy protection, and does not
+download content that is encrypted or restricted to paying users. Users are
+responsible for downloading only content they have the right to save, such
+as their own uploads, works in the public domain or under a license that
+allows it (for example Creative Commons), or where the law of their country
+allows a private copy, and for respecting the terms of the services they use.

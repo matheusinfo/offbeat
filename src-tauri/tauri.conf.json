@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://127.0.0.1:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm run build && npm run licenses",
     "frontendDist": "../dist"
   },
   "app": {
@@ -32,7 +32,17 @@
     "shortDescription": "Download YouTube audio as small files for your watch",
     "longDescription": "Paste a YouTube link, get a small audio file with tags and cover, ready for your watch.",
     "externalBin": ["binaries/yt-dlp", "binaries/ffmpeg", "binaries/ffprobe", "binaries/deno"],
-    "copyright": "© 2026 Matheus Andrade",
+    "resources": {
+      "../LICENSE": "licenses/LICENSE",
+      "../NOTICE": "licenses/NOTICE",
+      "binaries/THIRD-PARTY-LICENSES.txt": "licenses/THIRD-PARTY-LICENSES.txt",
+      "binaries/YT-DLP-LICENSE.txt": "licenses/YT-DLP-LICENSE.txt",
+      "binaries/YT-DLP-THIRD-PARTY-LICENSES.txt": "licenses/YT-DLP-THIRD-PARTY-LICENSES.txt",
+      "binaries/FFMPEG-LICENSE.txt": "licenses/FFMPEG-LICENSE.txt",
+      "binaries/FFMPEG-SOURCE.txt": "licenses/FFMPEG-SOURCE.txt",
+      "binaries/DENO-LICENSE.md": "licenses/DENO-LICENSE.md"
+    },
+    "copyright": "© 2026 Matheus Andrade. YouTube is a trademark of Google LLC; Offbeat is not affiliated with Google.",
     "license": "MIT"
   }
 }

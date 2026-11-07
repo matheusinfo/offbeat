@@ -12,6 +12,10 @@
 #   ffmpeg   github.com/yt-dlp/FFmpeg-Builds    static GPL build with libmp3lame
 #   ffprobe  same archive as ffmpeg             yt-dlp needs it to read the codec
 #   deno     github.com/denoland/deno           JS runtime yt-dlp uses for YouTube
+#
+# It also saves the license texts of the installed versions, which the
+# packages ship (bundle.resources in tauri.conf.json), and regenerates
+# THIRD-PARTY-LICENSES.txt for the Rust crates and npm packages.
 set -euo pipefail
 
 FORCE=0
@@ -113,3 +117,32 @@ echo "Versions:"
 "$DEST/yt-dlp-$TRIPLE" --version | sed 's/^/  yt-dlp  /'
 "$DEST/ffmpeg-$TRIPLE" -version | head -1 | sed 's/^/  /'
 "$DEST/deno-$TRIPLE" --version | head -1 | sed 's/^/  /'
+
+# Licenses always follow the installed versions, so they are fetched every
+# time (a few KB). The packages must carry them next to the binaries.
+echo
+echo "Licenses"
+YTDLP_VERSION="$("$DEST/yt-dlp-$TRIPLE" --version)"
+DENO_VERSION="$("$DEST/deno-$TRIPLE" --version | awk 'NR == 1 { print $2 }')"
+raw=https://raw.githubusercontent.com
+fetch "$raw/yt-dlp/yt-dlp/$YTDLP_VERSION/LICENSE" "$DEST/YT-DLP-LICENSE.txt"
+fetch "$raw/yt-dlp/yt-dlp/$YTDLP_VERSION/THIRD_PARTY_LICENSES.txt" "$DEST/YT-DLP-THIRD-PARTY-LICENSES.txt"
+fetch "$raw/denoland/deno/v$DENO_VERSION/LICENSE.md" "$DEST/DENO-LICENSE.md"
+
+# The GPL asks for the exact source of the ffmpeg we ship. The version line
+# names the FFmpeg commit (N-<n>-g<hash>-<date>).
+FFMPEG_VERSION="$("$DEST/ffmpeg-$TRIPLE" -version | awk 'NR == 1 { print $3 }')"
+FFMPEG_COMMIT="$(sed -nE 's/^N-[0-9]+-g([0-9a-f]+).*/\1/p' <<<"$FFMPEG_VERSION")"
+cat >"$DEST/FFMPEG-SOURCE.txt" <<SRC
+ffmpeg and ffprobe $FFMPEG_VERSION ($FFMPEG_ASSET)
+Static GPL build by https://github.com/yt-dlp/FFmpeg-Builds
+
+FFmpeg source of this build:
+  https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/${FFMPEG_COMMIT:-$FFMPEG_VERSION}
+Build scripts and the versions of the libraries linked into it:
+  https://github.com/yt-dlp/FFmpeg-Builds
+The full source is also available from the Offbeat release that shipped
+this binary (ffmpeg-source-*.tar.xz).
+SRC
+echo "  ✓ FFMPEG-SOURCE.txt ($FFMPEG_VERSION)"
+node "$ROOT/scripts/third-party-licenses.mjs"

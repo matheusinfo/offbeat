@@ -55,7 +55,9 @@ src-tauri/src/settings.rs   ~/.config/offbeat/settings.json (validação e grava
 src-tauri/src/sidecar.rs    caminhos dos sidecars e tool_versions
 src-tauri/tauri.conf.json   janela, CSP, bundle e externalBin
 src-tauri/capabilities/     permissões do WebView (mínimas)
-scripts/fetch-binaries.sh   baixa e confere (SHA-256) os sidecars
+scripts/fetch-binaries.sh   baixa e confere (SHA-256) os sidecars e salva as licenças deles
+scripts/third-party-licenses.mjs
+                            gera THIRD-PARTY-LICENSES.txt (licenças das crates e pacotes npm embutidos)
 scripts/install-desktop.sh  instala o AppImage em ~/Applications com atalho no menu (--remove desinstala)
 ```
 
