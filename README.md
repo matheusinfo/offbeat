@@ -52,6 +52,10 @@ Songs from YouTube Music come out especially nice: they bring the **album name**
 
 > 💡 **Good to know:** if you copy a song while it's playing *inside* a playlist, the link ends with `&list=…` and Offbeat brings **the whole playlist**. Don't worry, it always shows how many songs it found before downloading anything. If you only want that one song, click **Just this track**.
 
+### Mixes and full albums in a single video
+
+Some long videos (running mixes, DJ sets, "full album" uploads) are split into **chapters**. When a video has chapters, the preview shows how many and the option **Split into tracks, one per chapter**. Turn it on and each chapter becomes its own song, named after the chapter and numbered, with the video's name as the album. That way you can skip songs on the watch instead of scrubbing through a one-hour file.
+
 ---
 
 ## How to use it, step by step

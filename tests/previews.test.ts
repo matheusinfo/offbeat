@@ -7,7 +7,7 @@ import {
   isLoading,
   itemsFor,
   previewsReducer,
-  readyPreviews,
+  readySlots,
   trackCount,
   type PreviewsAction,
   type PreviewsState,
@@ -25,6 +25,7 @@ const video = (id: string): Preview => ({
   duration: 60,
   thumbnail: null,
   entries: [{ id, url: `https://www.youtube.com/watch?v=${id}`, title: `Song ${id}`, uploader: null, duration: 60 }],
+  chapters: [],
 });
 
 const playlist = (id: string, n: number): Preview => ({
@@ -51,7 +52,7 @@ describe('previewsReducer', () => {
     expect(isLoading(s)).toBe(true);
     const done = run([{ type: 'failed', batch: 1, key: 'b', error }], s);
     expect(isLoading(done)).toBe(false);
-    expect(readyPreviews(done).map((p) => p.id)).toEqual(['a']);
+    expect(readySlots(done).map((s) => s.preview.id)).toEqual(['a']);
     expect(done.slots[1]).toMatchObject({ state: 'error', error });
   });
 
@@ -114,5 +115,39 @@ describe('focusedItem', () => {
     expect(focusedItem(list, 'https://music.youtube.com/playlist?list=OLAK5uy_p', id)).toBeNull();
     expect(focusedItem(list, 'https://www.youtube.com/watch?v=zz&list=PL1', id)).toBeNull();
     expect(focusedItem(video('v'), 'https://www.youtube.com/watch?v=v&list=PL1', id)).toBeNull();
+  });
+});
+
+describe('chapters', () => {
+  const mix: Preview = {
+    ...video('m'),
+    title: 'Mix',
+    chapters: [
+      { title: 'Intro', start: 0, end: 60 },
+      { title: 'Song B', start: 60, end: 200 },
+    ],
+  };
+  const id = () => 'x';
+
+  it('splits a video into one numbered item per chapter when asked', () => {
+    expect(itemsFor(mix, id, true)).toEqual([
+      { id: 'x', url: mix.url, title: 'Intro', index: 1, section: { title: 'Intro', start: 0, end: 60 } },
+      { id: 'x', url: mix.url, title: 'Song B', index: 2, section: { title: 'Song B', start: 60, end: 200 } },
+    ]);
+    expect(trackCount(mix, true)).toBe(2);
+    expect(itemsFor(mix, id, false)).toHaveLength(1);
+    expect(trackCount(mix, false)).toBe(1);
+  });
+
+  it('only lets videos with chapters be split', () => {
+    const s = run([
+      { type: 'start', batch: 1, urls: ['m', 'v'] },
+      { type: 'resolved', batch: 1, key: 'm', preview: mix },
+      { type: 'resolved', batch: 1, key: 'v', preview: video('v') },
+      { type: 'split', key: 'm', split: true },
+      { type: 'split', key: 'v', split: true },
+    ]);
+    expect(readySlots(s).map((x) => x.split)).toEqual([true, false]);
+    expect(itemsFor(video('v'), id, true)).toHaveLength(1);
   });
 });

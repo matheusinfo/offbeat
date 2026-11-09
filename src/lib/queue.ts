@@ -2,7 +2,7 @@
 // in App.tsx; this module only decides what the state becomes and what to
 // start next.
 
-import type { DownloadOutcome } from './api';
+import type { Chapter, DownloadOutcome } from './api';
 import { classifyStderr, type ItemError } from './errors';
 import type { LineEvent } from './progress';
 
@@ -16,6 +16,8 @@ export interface QueueItem {
   title: string;
   /** 1-based playlist position, or null for a single video. */
   index: number | null;
+  /** Chapter of the video this item downloads, or null for the whole video. */
+  section: Chapter | null;
   status: ItemStatus;
   /** 0..1, or null while unknown. */
   progress: number | null;
@@ -40,6 +42,7 @@ export interface NewItem {
   url: string;
   title: string;
   index: number | null;
+  section?: Chapter | null;
 }
 
 export interface LineUpdate {
@@ -155,6 +158,7 @@ export function queueReducer(state: QueueState, action: QueueAction): QueueState
         .filter((n) => !known.has(n.id))
         .map((n) => ({
           ...n,
+          section: n.section ?? null,
           status: 'queued',
           progress: null,
           speed: null,

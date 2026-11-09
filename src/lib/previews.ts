@@ -9,7 +9,8 @@ import { focusedVideoId } from './ytdlp';
 
 export type Slot =
   | { key: string; url: string; state: 'loading' }
-  | { key: string; url: string; state: 'ok'; preview: Preview }
+  /** split: download a video with chapters as one track per chapter. */
+  | { key: string; url: string; state: 'ok'; preview: Preview; split: boolean }
   | { key: string; url: string; state: 'error'; error: ItemError };
 
 export interface PreviewsState {
@@ -23,6 +24,7 @@ export type PreviewsAction =
   | { type: 'resolved'; batch: number; key: string; preview: Preview }
   | { type: 'failed'; batch: number; key: string; error: ItemError }
   | { type: 'remove'; key: string }
+  | { type: 'split'; key: string; split: boolean }
   | { type: 'clear'; batch: number };
 
 export const initialPreviews: PreviewsState = { batch: 0, slots: [] };
@@ -41,7 +43,7 @@ export function previewsReducer(state: PreviewsState, action: PreviewsAction): P
       const slots = state.slots.map((slot): Slot => {
         if (slot.key !== action.key || slot.state !== 'loading') return slot;
         return action.type === 'resolved'
-          ? { key: slot.key, url: slot.url, state: 'ok', preview: action.preview }
+          ? { key: slot.key, url: slot.url, state: 'ok', preview: action.preview, split: false }
           : { key: slot.key, url: slot.url, state: 'error', error: action.error };
       });
       return { ...state, slots };
@@ -50,22 +52,47 @@ export function previewsReducer(state: PreviewsState, action: PreviewsAction): P
       const slots = state.slots.filter((s) => s.key !== action.key);
       return slots.length === state.slots.length ? state : { ...state, slots };
     }
+    case 'split':
+      return {
+        ...state,
+        slots: state.slots.map((s) =>
+          s.key === action.key && s.state === 'ok' && canSplit(s.preview) ? { ...s, split: action.split } : s,
+        ),
+      };
     case 'clear':
       return { batch: action.batch, slots: [] };
   }
 }
 
-export function readyPreviews(state: PreviewsState): Preview[] {
-  return state.slots.flatMap((s) => (s.state === 'ok' ? [s.preview] : []));
+export type ReadySlot = Extract<Slot, { state: 'ok' }>;
+
+export function readySlots(state: PreviewsState): ReadySlot[] {
+  return state.slots.filter((s): s is ReadySlot => s.state === 'ok');
+}
+
+export function canSplit(preview: Preview): boolean {
+  return preview.kind === 'video' && preview.chapters.length >= 2;
 }
 
 export function isLoading(state: PreviewsState): boolean {
   return state.slots.some((s) => s.state === 'loading');
 }
 
-/** Queue items for a preview: one per playlist track, numbered by position. */
-export function itemsFor(preview: Preview, newId: () => string): NewItem[] {
+/**
+ * Queue items for a preview: one per playlist track, numbered by position.
+ * A video split by chapters gives one numbered item per chapter.
+ */
+export function itemsFor(preview: Preview, newId: () => string, split = false): NewItem[] {
   if (preview.kind === 'video') {
+    if (split && canSplit(preview)) {
+      return preview.chapters.map((c, i) => ({
+        id: newId(),
+        url: preview.url,
+        title: c.title,
+        index: i + 1,
+        section: c,
+      }));
+    }
     return [{ id: newId(), url: preview.url, title: preview.title, index: null }];
   }
   return preview.entries.map((e, i) => ({ id: newId(), url: e.url, title: e.title, index: i + 1 }));
@@ -79,6 +106,7 @@ export function focusedItem(preview: Preview, sourceUrl: string, newId: () => st
   return entry ? { id: newId(), url: entry.url, title: entry.title, index: null } : null;
 }
 
-export function trackCount(preview: Preview): number {
-  return preview.kind === 'video' ? 1 : preview.entries.length;
+export function trackCount(preview: Preview, split = false): number {
+  if (preview.kind === 'playlist') return preview.entries.length;
+  return split && canSplit(preview) ? preview.chapters.length : 1;
 }

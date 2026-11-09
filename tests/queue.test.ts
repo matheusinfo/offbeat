@@ -38,6 +38,10 @@ describe('queue reducer', () => {
       ['a', 'queued', 1],
       ['b', 'queued', 2],
     ]);
+    expect(item(s, 'a').section).toBeNull();
+    const section = { title: 'Intro', start: 0, end: 60 };
+    const withSection = run([{ type: 'add', items: [{ id: 'c', url: 'u', title: 'Intro', index: 1, section }] }]);
+    expect(item(withSection, 'c').section).toEqual(section);
   });
 
   it('starts at most 2 at a time, in order', () => {

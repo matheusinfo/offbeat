@@ -36,6 +36,10 @@ export const ptBR = {
   'preview.download': 'Baixar',
   'preview.downloadMany': 'Baixar {count} faixas',
   'preview.clear': 'Limpar',
+  'preview.chapters': '{count} capítulos',
+  'preview.split': 'Dividir em {count} faixas, uma por capítulo',
+  'preview.splitHint': 'Cada capítulo vira uma música, com o nome dele. Bom para mixes e álbuns completos num vídeo só.',
+  'preview.showChapters': 'Ver capítulos',
   'preview.focusedHint': 'Você copiou “{title}” tocando dentro desta lista.',
   'preview.downloadFocused': 'Só esta faixa',
 

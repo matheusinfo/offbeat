@@ -15,6 +15,7 @@ yt-dlp --ignore-config --no-color -J --flat-playlist [--js-runtimes deno:<caminh
 - Vídeo único → uma entrada igual a ele. A URL vem de `webpage_url` (o campo `url` pode ser um link direto do googlevideo).
 - Capa: `thumbnail`, senão a maior de `thumbnails[]`, senão a da primeira faixa. Só URLs `https://i.ytimg.com/`.
 - Duração da playlist: soma das durações conhecidas (ou `null`).
+- Capítulos (só em vídeo único): `chapters[]` com `start_time`, `end_time` e `title`. Ficam só os válidos (tempos finitos, fim depois do início, em ordem), até 300; título vazio vira `01`, `02`… Com menos de 2, a lista vem vazia e a opção de dividir não aparece.
 
 ## Download (uma faixa)
 
@@ -46,6 +47,22 @@ yt-dlp --ignore-config --no-color --no-playlist --newline --progress --no-simula
 | `economy` | `-f bestaudio -x --audio-format mp3 --audio-quality 7` | LAME VBR V7, ~100 kbps |
 
 A estimativa de tamanho na pré-visualização usa MB por minuto do planejamento (0,96 / 1,0 / 0,75) em [src/lib/ytdlp.ts](../src/lib/ytdlp.ts). Num álbum de teste de 42:58 no perfil Equilibrado, a estimativa foi 43,0 MB e o resultado real, 41 MB.
+
+### Um capítulo por faixa (`section`)
+
+Com "Dividir em faixas" ligado, cada capítulo vira um item da fila com `section: {title, start, end}` e o número do capítulo em `index`. O download é o mesmo comando, mais:
+
+```
+--download-sections "*<início>-<fim>"
+--parse-metadata "%(album,title)s:(?P<album>.+)"
+--replace-in-metadata title ".+" "<título do capítulo>"
+```
+
+- `--download-sections` baixa só o trecho (o yt-dlp usa o ffmpeg para cortar a fonte remota). Um processo por capítulo, como numa playlist: progresso, cancelamento e "tentar de novo" por faixa.
+- O nome do vídeo vira o **álbum** (se o YouTube não informar um) e o do capítulo, o **título**, nas tags e no nome do arquivo: os dois passos rodam antes de o arquivo ser nomeado, nessa ordem. Na substituição, `\` é o único caractere especial e é dobrado.
+- **SponsorBlock fica desligado** para capítulos: os tempos dele são do vídeo inteiro.
+- O backend revalida o capítulo vindo do front (tempos finitos, início ≥ 0, fim > início, título de 1 a 300 caracteres sem caracteres de controle).
+- Testado com o yt-dlp 2026.10.26: o capítulo de 0 a 169 s saiu com 169,0 s, título, número da faixa e álbum certos.
 
 ### Volume igual (`normalizeVolume`)
 

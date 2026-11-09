@@ -2,7 +2,7 @@ use crate::error::{AppError, AppResult, ErrorCode};
 use crate::process::{self, Tail};
 use crate::sidecar::{self, Tool};
 use crate::state::{AppState, Job};
-use crate::ytdlp::{self, DownloadPlan, Preview};
+use crate::ytdlp::{self, Chapter, DownloadPlan, Preview};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -24,6 +24,8 @@ pub struct DownloadRequest {
     pub id: String,
     pub url: String,
     pub index: Option<u32>,
+    /// Download only this chapter of the video, as its own track.
+    pub section: Option<Chapter>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize)]
@@ -119,6 +121,9 @@ pub async fn download(
     if request.index == Some(0) {
         return Err(AppError::new(ErrorCode::InvalidRequest, "index is 1-based"));
     }
+    if let Some(section) = &request.section {
+        section.validate()?;
+    }
     let url = ytdlp::validate_url(&request.url)?;
     let settings = state.settings();
     let ytdlp_bin = sidecar::path(Tool::YtDlp)?;
@@ -155,6 +160,7 @@ pub async fn download(
         pattern: settings.filename_pattern,
         sponsorblock: settings.sponsorblock,
         normalize_volume: settings.normalize_volume,
+        section: request.section,
         output_dir: utf8(&settings.output_dir)?,
         temp_dir: utf8(&temp_dir)?,
         ffmpeg: utf8(&ffmpeg)?,

@@ -17,7 +17,7 @@ O React só fala com o backend por comandos do Tauri e, durante um download, por
 | Comando | Argumentos (JS) | Retorno | O que faz |
 | --- | --- | --- | --- |
 | `preview` | `{ url }` | `Preview` | `yt-dlp -J --flat-playlist`, timeout de 60 s, devolve título, capa, duração e faixas |
-| `download` | `{ request: {id, url, index}, onEvent }` | `DownloadOutcome` | baixa uma faixa e encaminha cada linha de stdout e stderr pelo `Channel` |
+| `download` | `{ request: {id, url, index, section}, onEvent }` | `DownloadOutcome` | baixa uma faixa e encaminha cada linha de stdout e stderr pelo `Channel` |
 | `cancel_download` | `{ id }` | `boolean` | pede o cancelamento; `false` se o id não está rodando |
 | `get_settings` / `save_settings` | `{ settings }` | `Settings` | lê ou valida e grava as configurações |
 | `open_output_dir` | | | cria a pasta se preciso e abre no gerenciador de arquivos |

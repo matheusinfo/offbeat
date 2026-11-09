@@ -13,7 +13,7 @@ import {
   isLoading,
   itemsFor,
   previewsReducer,
-  readyPreviews,
+  readySlots,
   trackCount,
 } from './lib/previews';
 import { formatBytes } from './lib/format';
@@ -94,7 +94,7 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   // Only answers for the latest paste may update the screen.
   const previewBatch = useRef(0);
   const previewing = isLoading(previews);
-  const ready = readyPreviews(previews);
+  const ready = readySlots(previews);
   const single = previews.slots.length === 1 ? previews.slots[0] : undefined;
   const singleError: ItemError | null = single?.state === 'error' ? single.error : null;
 
@@ -149,8 +149,8 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
     else dispatchPreviews({ type: 'remove', key });
   }
 
-  function enqueue(preview: PreviewData, key: string) {
-    dispatch({ type: 'add', items: itemsFor(preview, newId) });
+  function enqueue(preview: PreviewData, split: boolean, key: string) {
+    dispatch({ type: 'add', items: itemsFor(preview, newId, split) });
     removePreview(key);
   }
 
@@ -162,7 +162,7 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   }
 
   function enqueueAll() {
-    dispatch({ type: 'add', items: ready.flatMap((p) => itemsFor(p, newId)) });
+    dispatch({ type: 'add', items: ready.flatMap((s) => itemsFor(s.preview, newId, s.split)) });
     clearPreviews();
   }
 
@@ -214,7 +214,9 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
                 disabled={previewing || ready.length === 0}
               >
                 <Download size={16} aria-hidden="true" />
-                <span>{t('previews.downloadAll', { count: ready.reduce((n, p) => n + trackCount(p), 0) })}</span>
+                <span>
+                  {t('previews.downloadAll', { count: ready.reduce((n, s) => n + trackCount(s.preview, s.split), 0) })}
+                </span>
               </button>
             </div>
           </div>
@@ -225,7 +227,9 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
               key={slot.key}
               preview={slot.preview}
               profile={settings.profile}
-              onDownload={() => enqueue(slot.preview, slot.key)}
+              split={slot.split}
+              onSplitChange={(split) => dispatchPreviews({ type: 'split', key: slot.key, split })}
+              onDownload={() => enqueue(slot.preview, slot.split, slot.key)}
               focusedTitle={focusedItem(slot.preview, slot.url, () => '')?.title ?? null}
               onDownloadFocused={() => enqueueFocused(slot.preview, slot.url, slot.key)}
               onClear={() => removePreview(slot.key)}
@@ -318,7 +322,7 @@ function useDownloadRunner(items: QueueItem[], dispatch: Dispatch<QueueAction>):
 
       const { id } = item;
       api
-        .download({ id, url: item.url, index: item.index }, ({ line }) => {
+        .download({ id, url: item.url, index: item.index, section: item.section }, ({ line }) => {
           if (cancelUnconfirmed.current.has(key)) requestCancel(id, key);
           const event = parseLine(line);
           if (!event) return;

@@ -35,6 +35,14 @@ export interface PreviewEntry {
   duration: number | null;
 }
 
+/** A chapter of a video, or the part of it a download is limited to. */
+export interface Chapter {
+  title: string;
+  /** Seconds from the start of the video. */
+  start: number;
+  end: number;
+}
+
 export interface Preview {
   kind: 'video' | 'playlist';
   id: string;
@@ -47,6 +55,8 @@ export interface Preview {
   thumbnail: string | null;
   /** For a single video, one entry equal to the video itself. */
   entries: PreviewEntry[];
+  /** Only for a single video with two or more chapters; empty otherwise. */
+  chapters: Chapter[];
 }
 
 export interface DownloadRequest {
@@ -55,6 +65,8 @@ export interface DownloadRequest {
   url: string;
   /** 1-based position in the playlist; adds a "01 - " prefix to the file name. */
   index: number | null;
+  /** Download only this chapter, named and tagged as its own track. */
+  section: Chapter | null;
 }
 
 /** Raw output line from yt-dlp (stdout or stderr); parsed in lib/progress.ts. */

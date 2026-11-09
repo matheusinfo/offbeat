@@ -14,6 +14,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - Vários links de uma vez, com uma pré-visualização para cada e "Baixar tudo"
 - "Só esta faixa" para links de música tocada dentro de uma lista (`watch?v=…&list=…`)
 - Volume igual em todas as músicas (`loudnorm` na mesma codificação do MP3)
+- Vídeos com capítulos divididos em uma faixa por capítulo (`--download-sections`)
 
 ## Pendente
 

@@ -3,7 +3,7 @@
 
 use crate::error::{AppError, AppResult, ErrorCode};
 use crate::settings::{FilenamePattern, Profile};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 const MAX_URL_LEN: usize = 2048;
@@ -103,6 +103,74 @@ pub struct PreviewEntry {
     pub duration: Option<f64>,
 }
 
+/// A chapter of a video; also the part of it a download may be limited to.
+/// Mirrors `Chapter` in src/lib/api.ts.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Chapter {
+    pub title: String,
+    /// Seconds from the start of the video.
+    pub start: f64,
+    pub end: f64,
+}
+
+const MAX_CHAPTERS: usize = 300;
+const MAX_CHAPTER_TITLE: usize = 300;
+
+impl Chapter {
+    /// Checks a chapter sent back by the UI before it reaches yt-dlp.
+    pub fn validate(&self) -> AppResult<()> {
+        let bad = |msg: &str| Err(AppError::new(ErrorCode::InvalidRequest, msg));
+        if !(self.start.is_finite() && self.end.is_finite()) || self.start < 0.0 {
+            return bad("chapter times must be finite and not negative");
+        }
+        if self.end <= self.start {
+            return bad("chapter must end after it starts");
+        }
+        let title = self.title.trim();
+        if title.is_empty() || title.chars().count() > MAX_CHAPTER_TITLE {
+            return bad("chapter title is empty or too long");
+        }
+        if title.chars().any(char::is_control) {
+            return bad("chapter title must not contain control characters");
+        }
+        Ok(())
+    }
+}
+
+/// Chapters worth splitting into tracks: at least two, in order, valid.
+fn chapters(v: &Value) -> Vec<Chapter> {
+    let Some(list) = v.get("chapters").and_then(Value::as_array) else {
+        return Vec::new();
+    };
+    let parsed: Vec<Chapter> = list
+        .iter()
+        .take(MAX_CHAPTERS)
+        .enumerate()
+        .filter_map(|(i, c)| {
+            let time = |k: &str| c.get(k).and_then(Value::as_f64);
+            let title = str_field(c, "title")
+                .map(|t| {
+                    t.chars()
+                        .filter(|ch| !ch.is_control())
+                        .take(MAX_CHAPTER_TITLE)
+                        .collect()
+                })
+                .filter(|t: &String| !t.trim().is_empty())
+                .unwrap_or_else(|| format!("{:02}", i + 1));
+            let chapter = Chapter {
+                title,
+                start: time("start_time")?,
+                end: time("end_time")?,
+            };
+            chapter.validate().ok().map(|()| chapter)
+        })
+        .collect();
+    if parsed.len() < 2 || parsed.windows(2).any(|w| w[1].start < w[0].start) {
+        return Vec::new();
+    }
+    parsed
+}
+
 /// Mirrors `Preview` in src/lib/api.ts.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Preview {
@@ -114,6 +182,8 @@ pub struct Preview {
     pub duration: Option<f64>,
     pub thumbnail: Option<String>,
     pub entries: Vec<PreviewEntry>,
+    /// Only for a single video with two or more chapters; empty otherwise.
+    pub chapters: Vec<Chapter>,
 }
 
 fn str_field<'a>(v: &'a Value, key: &str) -> Option<&'a str> {
@@ -225,6 +295,7 @@ pub fn parse_preview(json: &str) -> AppResult<Preview> {
             duration,
             thumbnail,
             entries,
+            chapters: Vec::new(),
             title,
             id,
         });
@@ -248,6 +319,7 @@ pub fn parse_preview(json: &str) -> AppResult<Preview> {
         duration: entry.duration,
         thumbnail: thumbnail(&root),
         entries: vec![entry],
+        chapters: chapters(&root),
         title,
         id,
     })
@@ -263,10 +335,17 @@ pub struct DownloadPlan {
     pub pattern: FilenamePattern,
     pub sponsorblock: bool,
     pub normalize_volume: bool,
+    /// Download only this part of the video, as its own track.
+    pub section: Option<Chapter>,
     pub output_dir: String,
     pub temp_dir: String,
     pub ffmpeg: String,
     pub deno: Option<String>,
+}
+
+/// Literal text for a Python re.sub replacement: only the backslash is special.
+fn regex_replacement(text: &str) -> String {
+    text.replace('\\', "\\\\")
 }
 
 pub fn output_template(pattern: FilenamePattern, index: Option<u32>) -> String {
@@ -356,13 +435,27 @@ pub fn download_args(plan: &DownloadPlan) -> Vec<String> {
         args.push("--parse-metadata".into());
         args.push(format!("{n}:(?P<track_number>.+)"));
     }
+    if let Some(section) = &plan.section {
+        args.push("--download-sections".into());
+        args.push(format!("*{}-{}", section.start, section.end));
+        // The video's name becomes the album (unless it has one) and the
+        // chapter's name the title, in the tags and in the file name. Both
+        // run before the file is named, in this order.
+        args.push("--parse-metadata".into());
+        args.push("%(album,title)s:(?P<album>.+)".into());
+        args.push("--replace-in-metadata".into());
+        args.push("title".into());
+        args.push(".+".into());
+        args.push(regex_replacement(section.title.trim()));
+    }
     args.extend(profile_args(plan.profile).iter().map(|s| s.to_string()));
     // Original copies the AAC stream; a filter would force a re-encode.
     if plan.normalize_volume && plan.profile != Profile::Original {
         args.push("--ppa".into());
         args.push(LOUDNORM_PPA.into());
     }
-    if plan.sponsorblock {
+    // SponsorBlock times refer to the whole video, not to a section of it.
+    if plan.sponsorblock && plan.section.is_none() {
         args.push("--sponsorblock-remove".into());
         args.push("music_offtopic".into());
     }
@@ -480,6 +573,61 @@ mod tests {
     }
 
     #[test]
+    fn parses_chapters_of_a_video() {
+        let json = r#"{"id": "abc", "title": "Mix", "chapters": [
+            {"start_time": 0, "end_time": 169, "title": "black vortex"},
+            {"start_time": 169, "end_time": 410.5, "title": "  "},
+            {"start_time": 410.5, "end_time": 400, "title": "backwards"},
+            {"start_time": 410.5, "end_time": 615, "title": "carefree"}
+        ]}"#;
+        let p = parse_preview(json).expect("parse");
+        let got: Vec<(&str, f64, f64)> = p
+            .chapters
+            .iter()
+            .map(|c| (c.title.as_str(), c.start, c.end))
+            .collect();
+        assert_eq!(
+            got,
+            vec![
+                ("black vortex", 0.0, 169.0),
+                ("02", 169.0, 410.5),
+                ("carefree", 410.5, 615.0)
+            ]
+        );
+
+        let one = r#"{"id": "abc", "chapters": [{"start_time": 0, "end_time": 9, "title": "x"}]}"#;
+        assert!(parse_preview(one).expect("parse").chapters.is_empty());
+        assert!(parse_preview(r#"{"id": "abc"}"#)
+            .expect("parse")
+            .chapters
+            .is_empty());
+    }
+
+    #[test]
+    fn validates_chapters_from_the_ui() {
+        let c = |title: &str, start: f64, end: f64| Chapter {
+            title: title.into(),
+            start,
+            end,
+        };
+        assert!(c("Song", 0.0, 1.5).validate().is_ok());
+        for bad in [
+            c("Song", -1.0, 5.0),
+            c("Song", 5.0, 5.0),
+            c("Song", 0.0, f64::INFINITY),
+            c("Song", f64::NAN, 5.0),
+            c(" ", 0.0, 5.0),
+            c("a\nb", 0.0, 5.0),
+            c(&"x".repeat(301), 0.0, 5.0),
+        ] {
+            assert_eq!(
+                bad.validate().expect_err(&bad.title).code,
+                ErrorCode::InvalidRequest
+            );
+        }
+    }
+
+    #[test]
     fn video_without_title_or_webpage_url() {
         let p = parse_preview(r#"{"id":"abc","channel":"Chan"}"#).expect("parse");
         assert_eq!(p.title, "abc");
@@ -575,6 +723,7 @@ mod tests {
             pattern: FilenamePattern::Title,
             sponsorblock: false,
             normalize_volume: false,
+            section: None,
             output_dir: "/home/u/Music/Offbeat".into(),
             temp_dir: "/home/u/.cache/offbeat/tmp/job1".into(),
             ffmpeg: "/app/ffmpeg".into(),
@@ -715,6 +864,39 @@ mod tests {
             ..plan()
         });
         assert_eq!(value_after(&original, "--ppa").len(), 1);
+    }
+
+    #[test]
+    fn download_args_section() {
+        let args = download_args(&DownloadPlan {
+            index: Some(2),
+            sponsorblock: true,
+            section: Some(Chapter {
+                title: " Back\\slash \\1 song ".into(),
+                start: 169.0,
+                end: 410.5,
+            }),
+            ..plan()
+        });
+        assert_eq!(
+            value_after(&args, "--download-sections"),
+            vec!["*169-410.5"]
+        );
+        assert_eq!(
+            value_after(&args, "--parse-metadata"),
+            vec!["2:(?P<track_number>.+)", "%(album,title)s:(?P<album>.+)"]
+        );
+        assert!(contains_seq(
+            &args,
+            &[
+                "--replace-in-metadata",
+                "title",
+                ".+",
+                "Back\\\\slash \\\\1 song"
+            ]
+        ));
+        assert!(!args.iter().any(|a| a == "--sponsorblock-remove"));
+        assert_eq!(regex_replacement("a\\b"), "a\\\\b");
     }
 
     #[test]

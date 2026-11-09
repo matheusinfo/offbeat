@@ -4,11 +4,15 @@ import type { Preview as PreviewData, Profile } from '../lib/api';
 import type { ItemError } from '../lib/errors';
 import { ErrorNote } from './ErrorNote';
 import { formatBytes, formatDuration, formatIndex } from '../lib/format';
+import { canSplit } from '../lib/previews';
 import { estimateEntries } from '../lib/ytdlp';
 
 interface Props {
   preview: PreviewData;
   profile: Profile;
+  /** Download a video with chapters as one track per chapter. */
+  split: boolean;
+  onSplitChange: (split: boolean) => void;
   onDownload: () => void;
   /** Title of the track a list link was opened on (watch?v=…&list=…), if any. */
   focusedTitle: string | null;
@@ -21,11 +25,22 @@ function safeThumbnail(url: string | null): string | null {
   return url !== null && url.startsWith('https://i.ytimg.com/') ? url : null;
 }
 
-export function Preview({ preview, profile, onDownload, focusedTitle, onDownloadFocused, onClear }: Props) {
+export function Preview({
+  preview,
+  profile,
+  split,
+  onSplitChange,
+  onDownload,
+  focusedTitle,
+  onDownloadFocused,
+  onClear,
+}: Props) {
   const { t, lang } = useI18n();
   const thumbnail = safeThumbnail(preview.thumbnail);
   const isPlaylist = preview.kind === 'playlist';
-  const count = preview.entries.length;
+  const splittable = canSplit(preview);
+  const chapterCount = preview.chapters.length;
+  const count = isPlaylist ? preview.entries.length : split && splittable ? chapterCount : 1;
   const durations =
     isPlaylist ? preview.entries.map((e) => e.duration) : [preview.duration ?? preview.entries[0]?.duration ?? null];
   const estimate = estimateEntries(durations, profile);
@@ -57,6 +72,7 @@ export function Preview({ preview, profile, onDownload, focusedTitle, onDownload
             {isPlaylist && (
               <> · {count === 1 ? t('preview.trackOne') : t('preview.trackMany', { count })}</>
             )}
+            {splittable && <> · {t('preview.chapters', { count: chapterCount })}</>}
           </p>
           <h2 className="preview__title">{preview.title}</h2>
           {preview.uploader && <p className="muted">{preview.uploader}</p>}
@@ -81,6 +97,29 @@ export function Preview({ preview, profile, onDownload, focusedTitle, onDownload
           </ol>
         </details>
       )}
+      {splittable && (
+        <>
+          <label className="checkbox">
+            <input type="checkbox" checked={split} onChange={(e) => onSplitChange(e.target.checked)} />
+            <span>
+              <span className="checkbox__label">{t('preview.split', { count: chapterCount })}</span>
+              <span className="hint">{t('preview.splitHint')}</span>
+            </span>
+          </label>
+          <details className="preview__tracks">
+            <summary>{t('preview.showChapters')}</summary>
+            <ol>
+              {preview.chapters.map((chapter, i) => (
+                <li key={`${chapter.start}-${i}`}>
+                  <span className="preview__track-index">{formatIndex(i + 1)}</span>
+                  <span className="preview__track-title">{chapter.title}</span>
+                  <span className="muted">{formatDuration(chapter.end - chapter.start)}</span>
+                </li>
+              ))}
+            </ol>
+          </details>
+        </>
+      )}
       {isPlaylist && count === 0 && <p className="muted">{t('preview.emptyPlaylist')}</p>}
       {focusedTitle !== null && (
         <p className="preview__focused muted">{t('preview.focusedHint', { title: focusedTitle })}</p>
@@ -99,7 +138,7 @@ export function Preview({ preview, profile, onDownload, focusedTitle, onDownload
         )}
         <button type="button" className="btn btn--primary" onClick={onDownload} disabled={count === 0}>
           <Download size={16} aria-hidden="true" />
-          <span>{isPlaylist && count > 1 ? t('preview.downloadMany', { count }) : t('preview.download')}</span>
+          <span>{count > 1 ? t('preview.downloadMany', { count }) : t('preview.download')}</span>
         </button>
       </div>
     </section>

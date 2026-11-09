@@ -35,6 +35,10 @@ export const enUS: Record<MessageKey, string> = {
   'preview.download': 'Download',
   'preview.downloadMany': 'Download {count} tracks',
   'preview.clear': 'Clear',
+  'preview.chapters': '{count} chapters',
+  'preview.split': 'Split into {count} tracks, one per chapter',
+  'preview.splitHint': 'Each chapter becomes a song, with its own name. Good for mixes and full albums in a single video.',
+  'preview.showChapters': 'Show chapters',
   'preview.focusedHint': 'You copied “{title}” while it played inside this list.',
   'preview.downloadFocused': 'Just this track',
 
