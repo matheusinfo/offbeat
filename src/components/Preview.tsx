@@ -10,6 +10,9 @@ interface Props {
   preview: PreviewData;
   profile: Profile;
   onDownload: () => void;
+  /** Title of the track a list link was opened on (watch?v=…&list=…), if any. */
+  focusedTitle: string | null;
+  onDownloadFocused: () => void;
   onClear: () => void;
 }
 
@@ -18,7 +21,7 @@ function safeThumbnail(url: string | null): string | null {
   return url !== null && url.startsWith('https://i.ytimg.com/') ? url : null;
 }
 
-export function Preview({ preview, profile, onDownload, onClear }: Props) {
+export function Preview({ preview, profile, onDownload, focusedTitle, onDownloadFocused, onClear }: Props) {
   const { t, lang } = useI18n();
   const thumbnail = safeThumbnail(preview.thumbnail);
   const isPlaylist = preview.kind === 'playlist';
@@ -79,12 +82,21 @@ export function Preview({ preview, profile, onDownload, onClear }: Props) {
         </details>
       )}
       {isPlaylist && count === 0 && <p className="muted">{t('preview.emptyPlaylist')}</p>}
+      {focusedTitle !== null && (
+        <p className="preview__focused muted">{t('preview.focusedHint', { title: focusedTitle })}</p>
+      )}
 
       <div className="preview__actions">
         <button type="button" className="btn" onClick={onClear}>
           <X size={16} aria-hidden="true" />
           <span>{t('preview.clear')}</span>
         </button>
+        {focusedTitle !== null && (
+          <button type="button" className="btn" onClick={onDownloadFocused}>
+            <Music size={16} aria-hidden="true" />
+            <span>{t('preview.downloadFocused')}</span>
+          </button>
+        )}
         <button type="button" className="btn btn--primary" onClick={onDownload} disabled={count === 0}>
           <Download size={16} aria-hidden="true" />
           <span>{isPlaylist && count > 1 ? t('preview.downloadMany', { count }) : t('preview.download')}</span>

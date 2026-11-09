@@ -96,7 +96,7 @@ Testado com o yt-dlp 2026.10.26 e um álbum de 10 faixas:
 | --- | --- |
 | `music.youtube.com/playlist?list=OLAK5uy…` (álbum) ou `?list=PL…` (playlist) | Playlist; as faixas vêm como `music.youtube.com/watch?v=…` com `ie_key: Youtube` |
 | `music.youtube.com/browse/MPREb…` (página do álbum) | O yt-dlp redireciona para a playlist `OLAK5uy…` do álbum (aviso "YouTube Music is not directly supported" no stderr, inofensivo) |
-| `music.youtube.com/watch?v=…&list=…` | **A playlist inteira** (padrão do yt-dlp). A pré-visualização mostra a contagem antes de baixar |
+| `music.youtube.com/watch?v=…&list=…` | **A playlist inteira** (padrão do yt-dlp). A pré-visualização mostra a contagem e o botão "Só esta faixa", que põe na fila só a entrada com o `v=` do link (`focusedVideoId` e `focusedItem` no front), sem número |
 | `music.youtube.com/watch?v=…` | Só a faixa |
 
 - As faixas trazem `artist` e `album`, então o padrão "Artista - Título" e as tags saem certos.

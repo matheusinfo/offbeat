@@ -447,6 +447,10 @@ input[type='checkbox'] {
   white-space: nowrap;
 }
 
+.preview__focused {
+  font-size: 13px;
+}
+
 .preview__actions {
   display: flex;
   justify-content: flex-end;

@@ -50,7 +50,7 @@ Yes! Albums and playlists from **YouTube Music** work just like the ones from Yo
 
 Songs from YouTube Music come out especially nice: they bring the **album name** and the **square album cover**, and the songs are numbered in album order (`01 - `, `02 - `…).
 
-> 💡 **Good to know:** if you copy a song while it's playing *inside* a playlist, the link ends with `&list=…` and Offbeat brings **the whole playlist**. Don't worry, it always shows how many songs it found before downloading anything. If you only want that one song, delete the `&list=…` part of the link.
+> 💡 **Good to know:** if you copy a song while it's playing *inside* a playlist, the link ends with `&list=…` and Offbeat brings **the whole playlist**. Don't worry, it always shows how many songs it found before downloading anything. If you only want that one song, click **Just this track**.
 
 ---
 

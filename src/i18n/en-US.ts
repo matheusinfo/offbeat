@@ -35,6 +35,8 @@ export const enUS: Record<MessageKey, string> = {
   'preview.download': 'Download',
   'preview.downloadMany': 'Download {count} tracks',
   'preview.clear': 'Clear',
+  'preview.focusedHint': 'You copied “{title}” while it played inside this list.',
+  'preview.downloadFocused': 'Just this track',
 
   'profile.original': 'Original',
   'profile.balanced': 'Balanced',

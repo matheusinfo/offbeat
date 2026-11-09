@@ -5,6 +5,7 @@
 import type { Preview } from './api';
 import type { ItemError } from './errors';
 import type { NewItem } from './queue';
+import { focusedVideoId } from './ytdlp';
 
 export type Slot =
   | { key: string; url: string; state: 'loading' }
@@ -68,6 +69,14 @@ export function itemsFor(preview: Preview, newId: () => string): NewItem[] {
     return [{ id: newId(), url: preview.url, title: preview.title, index: null }];
   }
   return preview.entries.map((e, i) => ({ id: newId(), url: e.url, title: e.title, index: i + 1 }));
+}
+
+/** The single track a list link was opened on, as a queue item without a number. */
+export function focusedItem(preview: Preview, sourceUrl: string, newId: () => string): NewItem | null {
+  if (preview.kind !== 'playlist') return null;
+  const id = focusedVideoId(sourceUrl);
+  const entry = id === null ? undefined : preview.entries.find((e) => e.id === id);
+  return entry ? { id: newId(), url: entry.url, title: entry.title, index: null } : null;
 }
 
 export function trackCount(preview: Preview): number {

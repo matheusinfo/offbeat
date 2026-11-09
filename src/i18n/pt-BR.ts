@@ -36,6 +36,8 @@ export const ptBR = {
   'preview.download': 'Baixar',
   'preview.downloadMany': 'Baixar {count} faixas',
   'preview.clear': 'Limpar',
+  'preview.focusedHint': 'Você copiou “{title}” tocando dentro desta lista.',
+  'preview.downloadFocused': 'Só esta faixa',
 
   'profile.original': 'Original',
   'profile.balanced': 'Equilibrado',

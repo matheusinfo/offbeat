@@ -32,6 +32,20 @@ export function isSupportedUrl(raw: string): boolean {
   return parseSupportedUrl(raw) !== null;
 }
 
+/**
+ * Video id of a link that points at one video inside a list
+ * (watch?v=ID&list=… or youtu.be/ID?list=…). yt-dlp downloads the whole list
+ * for these; the id lets the user pick just that track. Null otherwise.
+ */
+export function focusedVideoId(raw: string): string | null {
+  const text = parseSupportedUrl(raw);
+  if (text === null) return null;
+  const url = new URL(text);
+  if (!url.searchParams.get('list')) return null;
+  const id = url.hostname.toLowerCase() === 'youtu.be' ? url.pathname.slice(1) : url.searchParams.get('v');
+  return id !== null && /^[A-Za-z0-9_-]{1,64}$/.test(id) ? id : null;
+}
+
 /** Links previewed at once; more than this is almost surely a pasting mistake. */
 export const MAX_LINKS = 20;
 

@@ -12,6 +12,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - Interface em pt-BR e en-US; tema claro/escuro seguindo o sistema
 - AppImage instalável para o usuário, com atalho no menu (`npm run install-desktop`)
 - Vários links de uma vez, com uma pré-visualização para cada e "Baixar tudo"
+- "Só esta faixa" para links de música tocada dentro de uma lista (`watch?v=…&list=…`)
 
 ## Pendente
 
@@ -19,7 +20,6 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 
 | Ideia | Por quê | Esforço |
 |---|---|---|
-| Opção "só esta faixa" para links `watch?v=…&list=…` | Hoje traz a lista inteira; quem copia uma música tocada de um álbum quer só ela | Baixo |
 | Arquivo de histórico (`--download-archive`) | Não baixar de novo o que já existe; base da sincronização | Baixo |
 | Playlists salvas: um clique para buscar só as faixas novas | Sincronizar uma playlist que cresce | Médio |
 | Cookies do navegador (`--cookies-from-browser`) | Playlists privadas e "Músicas curtidas" do YouTube Music | Médio |

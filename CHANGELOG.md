@@ -18,6 +18,7 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - **Instalação sem sudo.** `npm run install-desktop` instala o AppImage para o seu usuário, com o comando `offbeat` e o Offbeat no menu de aplicativos.
 - **Licenças junto com o app.** Os pacotes trazem uma pasta `licenses` com as licenças do Offbeat, do yt-dlp, do FFmpeg, do Deno e de todas as bibliotecas usadas, e o [NOTICE](NOTICE) diz onde achar o código-fonte do FFmpeg empacotado. Os READMEs ganharam um aviso legal: uso permitido, nada de DRM e marcas de terceiros.
 - **Vários links de uma vez.** Cole vários links separados por espaço (ou uma lista copiada, um por linha): cada um ganha a sua pré-visualização, e **Baixar tudo** põe todas as faixas na fila.
+- **Só esta faixa.** Um link de música tocada dentro de uma playlist (`watch?v=…&list=…`) continua mostrando a lista inteira, mas agora com o botão **Só esta faixa**, que baixa apenas aquela música.
 
 ### Correções
 

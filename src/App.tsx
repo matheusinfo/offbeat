@@ -8,6 +8,7 @@ import { I18nProvider, useI18n } from './i18n';
 import { api, type Preview as PreviewData, type Settings as SettingsData } from './lib/api';
 import { errorFromUnknown, type ItemError } from './lib/errors';
 import {
+  focusedItem,
   initialPreviews,
   isLoading,
   itemsFor,
@@ -153,6 +154,13 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
     removePreview(key);
   }
 
+  function enqueueFocused(preview: PreviewData, slotUrl: string, key: string) {
+    const item = focusedItem(preview, slotUrl, newId);
+    if (!item) return;
+    dispatch({ type: 'add', items: [item] });
+    removePreview(key);
+  }
+
   function enqueueAll() {
     dispatch({ type: 'add', items: ready.flatMap((p) => itemsFor(p, newId)) });
     clearPreviews();
@@ -218,6 +226,8 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
               preview={slot.preview}
               profile={settings.profile}
               onDownload={() => enqueue(slot.preview, slot.key)}
+              focusedTitle={focusedItem(slot.preview, slot.url, () => '')?.title ?? null}
+              onDownloadFocused={() => enqueueFocused(slot.preview, slot.url, slot.key)}
               onClear={() => removePreview(slot.key)}
             />
           ) : previews.slots.length > 1 ? (

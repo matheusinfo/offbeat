@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { estimateBytes, estimateEntries, isSupportedUrl, parseLinks, parseSupportedUrl } from '../src/lib/ytdlp';
+import {
+  estimateBytes,
+  estimateEntries,
+  focusedVideoId,
+  isSupportedUrl,
+  parseLinks,
+  parseSupportedUrl,
+} from '../src/lib/ytdlp';
 
 describe('isSupportedUrl', () => {
   it.each([
@@ -65,4 +72,19 @@ describe('parseLinks', () => {
     });
     expect(parseLinks('   ')).toEqual({ urls: [], invalid: [] });
   });
+});
+
+describe('focusedVideoId', () => {
+  it.each([
+    ['https://music.youtube.com/watch?v=abc_DEF-123&list=OLAK5uy_x', 'abc_DEF-123'],
+    ['https://www.youtube.com/watch?list=PL1&v=abc_DEF-123&index=3', 'abc_DEF-123'],
+    ['https://youtu.be/abc_DEF-123?list=PL1', 'abc_DEF-123'],
+  ])('finds the video in %s', (url, id) => expect(focusedVideoId(url)).toBe(id));
+
+  it.each([
+    'https://www.youtube.com/watch?v=abc_DEF-123',
+    'https://music.youtube.com/playlist?list=OLAK5uy_x',
+    'https://www.youtube.com/watch?v=bad!id&list=PL1',
+    'https://vimeo.com/watch?v=x&list=y',
+  ])('ignores %s', (url) => expect(focusedVideoId(url)).toBeNull());
 });

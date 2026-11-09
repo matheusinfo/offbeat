@@ -50,7 +50,7 @@ Sim! Álbuns e playlists do **YouTube Music** funcionam igualzinho aos do YouTub
 
 As músicas do YouTube Music saem especialmente caprichadas: vêm com o **nome do álbum** e a **capa quadrada do álbum**, e ficam numeradas na ordem do disco (`01 - `, `02 - `…).
 
-> 💡 **Bom saber:** se você copiar uma música enquanto ela toca *dentro* de uma playlist, o link termina com `&list=…` e o Offbeat traz **a playlist inteira**. Fique tranquilo: ele sempre mostra quantas músicas encontrou antes de baixar qualquer coisa. Se quiser só aquela música, apague o trecho `&list=…` do link.
+> 💡 **Bom saber:** se você copiar uma música enquanto ela toca *dentro* de uma playlist, o link termina com `&list=…` e o Offbeat traz **a playlist inteira**. Fique tranquilo: ele sempre mostra quantas músicas encontrou antes de baixar qualquer coisa. Se quiser só aquela música, clique em **Só esta faixa**.
 
 ---
 

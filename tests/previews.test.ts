@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Preview } from '../src/lib/api';
 import type { ItemError } from '../src/lib/errors';
 import {
+  focusedItem,
   initialPreviews,
   isLoading,
   itemsFor,
@@ -93,5 +94,25 @@ describe('itemsFor', () => {
       expect.objectContaining({ url: 'https://www.youtube.com/watch?v=v', index: null }),
     ]);
     expect(trackCount(video('v'))).toBe(1);
+  });
+});
+
+describe('focusedItem', () => {
+  const list = playlist('p', 3);
+  const id = () => 'x';
+
+  it('picks the track the list link was opened on, without a number', () => {
+    expect(focusedItem(list, 'https://music.youtube.com/watch?v=p1&list=OLAK5uy_p', id)).toEqual({
+      id: 'x',
+      url: 'https://www.youtube.com/watch?v=p1',
+      title: 'Track 2',
+      index: null,
+    });
+  });
+
+  it('is null for plain list links, unknown tracks and single videos', () => {
+    expect(focusedItem(list, 'https://music.youtube.com/playlist?list=OLAK5uy_p', id)).toBeNull();
+    expect(focusedItem(list, 'https://www.youtube.com/watch?v=zz&list=PL1', id)).toBeNull();
+    expect(focusedItem(video('v'), 'https://www.youtube.com/watch?v=v&list=PL1', id)).toBeNull();
   });
 });
