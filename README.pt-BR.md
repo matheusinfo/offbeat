@@ -118,6 +118,7 @@ Clique na **engrenagem** no canto de cima, à direita.
 - **Volume igual em todas as músicas:** deixa todas com o mesmo volume, sem uma baixinha e outra estourando no fone. Ótimo para treinar. Vem desligado; não vale para o perfil Original, que guarda o áudio intacto.
 - **Pular músicas já baixadas:** o Offbeat lembra o que já baixou. Ao abrir de novo uma playlist que cresceu, ele mostra quantas já vieram antes e o botão **Baixar N novas** traz só as novas. Mesmo que você já tenha apagado os arquivos depois de mandar para o relógio. Vem ligado. Quer uma de novo? **Baixar de novo** na pré-visualização, ou o **↻** na fila. **Apagar histórico** faz o Offbeat esquecer tudo.
 - **Idioma:** Português (Brasil) ou English (US). *Sistema* segue o seu computador.
+- **Atualizar yt-dlp** (em *Sobre*): quando o YouTube muda, os downloads param até o yt-dlp, a ferramenta que baixa, ser atualizado. Um clique baixa a versão nova do GitHub, conferida, e o Offbeat passa a usá-la. Se aparecer um erro de bloqueio ou HTTP 403, comece por aqui.
 
 ---
 
@@ -154,7 +155,7 @@ Depois, abra o **Offbeat** pelo menu de aplicativos. Para remover: `bash scripts
 De graça, sem conta, sem cadastro e sem anúncios.
 
 **Ele manda meus dados para algum lugar?**
-Não. O Offbeat roda no seu computador. A única coisa que vai para a internet é o próprio download, do YouTube (e do SponsorBlock, se você ligar). Nenhum tipo de rastreamento.
+Não. O Offbeat roda no seu computador. A única coisa que vai para a internet é o próprio download, do YouTube (e do SponsorBlock, se você ligar), e a busca da versão nova do yt-dlp no GitHub, só quando você clica em **Atualizar yt-dlp**. Nenhum tipo de rastreamento.
 
 **Preciso do YouTube Premium?**
 Não. Mas saiba que as regras do YouTube não permitem baixar fora dos apps dele, nem para assinantes Premium. **Você é responsável pelo que baixa.** Prefira músicas que você tem o direito de guardar, como envios seus ou músicas com licença livre (Creative Commons).
@@ -171,11 +172,11 @@ No perfil Equilibrado, cerca de **255 músicas por GB**. O rodapé mostra o tama
 
 | Mensagem | O que fazer |
 | --- | --- |
-| *O YouTube está bloqueando o acesso anônimo* | Espere um pouco e tente de novo. Se continuar, o Offbeat precisa de um yt-dlp mais novo (fale com quem instalou). |
+| *O YouTube está bloqueando o acesso anônimo* | Espere um pouco e tente de novo. Se continuar, clique em **Atualizar yt-dlp** nas Configurações. |
 | *Este conteúdo exige login* | O vídeo ou a playlist é privado ou só para membros. |
 | *Vídeo indisponível* | Foi removido ou está bloqueado no seu país. |
 | *Sem conexão com o YouTube* | Confira a sua internet. |
-| *O YouTube recusou o download (HTTP 403)* | O Offbeat precisa de um yt-dlp mais novo. |
+| *O YouTube recusou o download (HTTP 403)* | Clique em **Atualizar yt-dlp** nas Configurações. |
 
 Todo erro tem um link **Detalhes** com a mensagem original, útil se você pedir ajuda a alguém.
 

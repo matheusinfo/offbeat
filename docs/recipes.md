@@ -35,6 +35,8 @@ Pendência do [ROADMAP](../ROADMAP.md): mandar faixas do perfil Original (M4A) e
 
 ## Atualizar o yt-dlp (quando o YouTube quebrar)
 
+Para o usuário, o botão **Atualizar yt-dlp** nas Configurações resolve sem reinstalar. Para o código e os próximos pacotes:
+
 1. `npm run binaries -- --force` baixa os releases mais recentes, conferidos por SHA-256.
 2. Teste uma pré-visualização e um download no `npm run tauri dev`, com um vídeo e um álbum do YouTube Music.
 3. Confira se as mensagens de erro mudaram de texto (ex.: "Video unavailable" virou "This video is unavailable" no 2026.10.26) e acrescente os casos em [errors.ts](../src/lib/errors.ts) e [tests/errors.test.ts](../tests/errors.test.ts).

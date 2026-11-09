@@ -1,8 +1,10 @@
 use crate::error::{AppError, AppResult, ErrorCode};
 use crate::process;
+use crate::state::AppState;
 use serde::Serialize;
 use std::path::PathBuf;
 use std::time::Duration;
+use tauri::State;
 
 const VERSION_TIMEOUT: Duration = Duration::from_secs(10);
 
@@ -53,8 +55,8 @@ pub struct ToolVersions {
     pub deno: Option<String>,
 }
 
-async fn first_line(tool: Tool, arg: &str) -> Option<String> {
-    let program = path(tool).ok()?;
+async fn first_line(program: AppResult<PathBuf>, arg: &str) -> Option<String> {
+    let program = program.ok()?;
     let output = process::run(&program, &[arg.to_owned()], VERSION_TIMEOUT)
         .await
         .ok()?;
@@ -81,18 +83,19 @@ fn version_token(line: String) -> String {
     token.to_string()
 }
 
+/// yt-dlp is the one in use: the copy updated from the app, if any.
 #[tauri::command]
-pub async fn tool_versions() -> ToolVersions {
+pub async fn tool_versions(state: State<'_, AppState>) -> AppResult<ToolVersions> {
     let (yt_dlp, ffmpeg, deno) = tokio::join!(
-        first_line(Tool::YtDlp, "--version"),
-        first_line(Tool::Ffmpeg, "-version"),
-        first_line(Tool::Deno, "--version"),
+        first_line(state.ytdlp_path(), "--version"),
+        first_line(path(Tool::Ffmpeg), "-version"),
+        first_line(path(Tool::Deno), "--version"),
     );
-    ToolVersions {
+    Ok(ToolVersions {
         yt_dlp: yt_dlp.map(version_token),
         ffmpeg: ffmpeg.map(version_token),
         deno: deno.map(version_token),
-    }
+    })
 }
 
 #[cfg(test)]

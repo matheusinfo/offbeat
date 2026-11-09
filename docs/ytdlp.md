@@ -130,4 +130,13 @@ Testado com o yt-dlp 2026.10.26 e um álbum de 10 faixas:
 
 ## Atualizar o yt-dlp
 
-O YouTube muda com frequência. Para o desenvolvimento, `npm run binaries -- --force` baixa o release mais recente. A atualização pelo próprio app (para `~/.local/share/offbeat/bin/`) está no roadmap.
+O YouTube muda com frequência. Para o desenvolvimento, `npm run binaries -- --force` baixa o release mais recente.
+
+**Pelo app** ([updater.rs](../src-tauri/src/updater.rs)), no botão "Atualizar yt-dlp" das Configurações:
+
+1. Se ainda não existe, copia o yt-dlp empacotado (somente leitura dentro do AppImage) para `~/.local/share/offbeat/bin/yt-dlp`, por um arquivo temporário, com permissão 755.
+2. Roda `yt-dlp --ignore-config --no-color -U` na cópia (timeout de 5 min). O atualizador do próprio yt-dlp baixa o release do GitHub e confere com o `SHA2-256SUMS` dele. Testado: rebaixar para 2026.10.21 e voltar para 2026.10.26 funcionou ("Updated yt-dlp to stable@…").
+3. Compara as versões (`2026.10.26`, `2026.10.26.1` como números). A cópia só é usada (`AppState::ytdlp_path`) **enquanto for mais nova** que a empacotada. Se não for, é apagada.
+4. Ao abrir o app, `reconcile` repete a comparação em segundo plano: um AppImage novo pode trazer um yt-dlp mais novo que a cópia.
+
+`preview`, `download` e `tool_versions` usam sempre `ytdlp_path()`. Downloads em andamento continuam com o binário antigo (no Linux, trocar o arquivo não afeta um processo que já está rodando).

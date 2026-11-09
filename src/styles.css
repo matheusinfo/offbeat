@@ -864,6 +864,13 @@ legend.field-label {
   padding-left: 26px;
 }
 
+.settings__update {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .settings__about .field-label {
   margin-bottom: 2px;
 }

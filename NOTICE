@@ -47,7 +47,9 @@ Online services
 Offbeat makes no network requests of its own. yt-dlp contacts YouTube to read
 and download what the user asks for. When the user turns on the option, it
 also queries SponsorBlock (https://sponsor.ajay.app), whose data is licensed
-under CC BY-NC-SA 4.0.
+under CC BY-NC-SA 4.0. Only when the user clicks "Update yt-dlp", yt-dlp's own
+updater downloads the latest yt-dlp release from GitHub (https://github.com)
+and checks it against the release's SHA-256 list.
 
 -------------------------------------------------------------------------------
 Trademarks

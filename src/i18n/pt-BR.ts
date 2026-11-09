@@ -137,14 +137,20 @@ export const ptBR = {
   'settings.versionsLoading': 'Verificando ferramentas…',
   'settings.versionsFailed': 'Não foi possível verificar as ferramentas.',
   'settings.notFound': 'não encontrado',
+  'settings.update': 'Atualizar yt-dlp',
+  'settings.updating': 'Atualizando…',
+  'settings.updateHint': 'Quando o YouTube muda, os downloads param de funcionar até o yt-dlp ser atualizado. Baixa a versão nova do GitHub.',
+  'settings.updatingHint': 'Baixando a versão nova do GitHub. Pode levar um minuto.',
+  'settings.updated': 'yt-dlp atualizado para {version}.',
+  'settings.upToDate': 'O yt-dlp já está na versão mais recente ({version}).',
 
   'error.botCheck':
-    'O YouTube está bloqueando o acesso anônimo. Tente de novo mais tarde; atualizar o yt-dlp costuma resolver.',
+    'O YouTube está bloqueando o acesso anônimo. Tente de novo mais tarde, ou atualize o yt-dlp em Configurações.',
   'error.private':
     'Este conteúdo exige login (vídeo privado ou só para membros). Por enquanto o app só baixa conteúdo público.',
   'error.ffmpegMissing': 'Erro de instalação: o ffmpeg não foi encontrado. Reinstale o app.',
   'error.http403':
-    'O YouTube recusou o download (HTTP 403). Em geral o yt-dlp está desatualizado; atualizá-lo deve resolver.',
+    'O YouTube recusou o download (HTTP 403). Em geral o yt-dlp está desatualizado: atualize-o em Configurações.',
   'error.unavailable': 'Vídeo indisponível: pode ter sido removido ou estar bloqueado na sua região.',
   'error.network': 'Sem conexão com o YouTube. Confira a internet e tente de novo.',
   'error.unknown': 'O download falhou. Veja os detalhes.',
@@ -154,8 +160,8 @@ export const ptBR = {
   'error.sidecarMissing':
     'Erro de instalação: um programa necessário não foi encontrado no caminho testado (veja os detalhes). Reinstale o app.',
   'error.spawnFailed': 'Não foi possível iniciar o yt-dlp.',
-  'error.ytdlpFailed': 'O yt-dlp falhou. Tente de novo; atualizar o yt-dlp costuma resolver.',
-  'error.badOutput': 'O yt-dlp respondeu algo inesperado. Atualizar o yt-dlp costuma resolver.',
+  'error.ytdlpFailed': 'O yt-dlp falhou. Tente de novo, ou atualize o yt-dlp em Configurações.',
+  'error.badOutput': 'O yt-dlp respondeu algo inesperado. Atualize o yt-dlp em Configurações.',
   'error.busy': 'Há downloads demais em andamento. Tente de novo em instantes.',
   'error.io': 'Erro ao ler ou gravar arquivos. Confira a pasta de destino e o espaço livre.',
 } as const;

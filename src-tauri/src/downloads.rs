@@ -81,7 +81,7 @@ fn deno_path() -> AppResult<Option<String>> {
 #[tauri::command]
 pub async fn preview(state: State<'_, AppState>, url: String) -> AppResult<Preview> {
     let url = ytdlp::validate_url(&url)?;
-    let ytdlp_bin = sidecar::path(Tool::YtDlp)?;
+    let ytdlp_bin = state.ytdlp_path()?;
     let args = ytdlp::preview_args(&url, deno_path()?.as_deref());
     let out = process::run(&ytdlp_bin, &args, PREVIEW_TIMEOUT).await?;
     let stderr = process::tail_of(&out.stderr);
@@ -148,7 +148,7 @@ pub async fn download(
             });
         }
     }
-    let ytdlp_bin = sidecar::path(Tool::YtDlp)?;
+    let ytdlp_bin = state.ytdlp_path()?;
     let ffmpeg = sidecar::path(Tool::Ffmpeg)?;
     // yt-dlp finds ffprobe next to ffmpeg and needs it to extract audio.
     sidecar::path(Tool::Ffprobe)?;

@@ -6,6 +6,7 @@ mod process;
 mod settings;
 mod sidecar;
 mod state;
+mod updater;
 mod ytdlp;
 
 use settings::Settings;
@@ -34,6 +35,7 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
         temp_root: app_dir(app.path().cache_dir())?.join("tmp"),
         history_file: app_dir(app.path().data_dir())?.join("history.txt"),
         playlists_file: app_dir(app.path().data_dir())?.join("playlists.json"),
+        bin_dir: app_dir(app.path().data_dir())?.join("bin"),
     };
     // Leftovers from a crash or a kill; nothing can be running yet.
     if let Err(e) = std::fs::remove_dir_all(&paths.temp_root) {
@@ -47,6 +49,10 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let defaults = Settings::defaults(default_output_dir(app)?);
     let settings = settings::load(&paths.settings_file, defaults);
     app.manage(AppState::new(paths, settings));
+    let handle = app.handle().clone();
+    tauri::async_runtime::spawn(async move {
+        updater::reconcile(&handle.state::<AppState>()).await;
+    });
     Ok(())
 }
 
@@ -70,6 +76,7 @@ pub fn run() {
             settings::get_settings,
             settings::save_settings,
             sidecar::tool_versions,
+            updater::update_ytdlp,
         ])
         .build(tauri::generate_context!());
     let app = match app {

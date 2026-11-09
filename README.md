@@ -118,6 +118,7 @@ Click the **gear** at the top right.
 - **Same volume for every song:** evens out the loudness, so no song is too quiet or blasting in your earbuds. Great for working out. Off by default; not available with the Original profile, which keeps the audio untouched.
 - **Skip songs already downloaded:** Offbeat remembers what it downloaded. Open a playlist that grew and it shows how many came before, and **Download N new** brings only the new ones, even if you deleted the files after sending them to the watch. On by default. Want one again? **Download again** in the preview, or **↻** in the queue. **Clear history** makes Offbeat forget everything.
 - **Language:** Português (Brasil) or English (US). *System* follows your computer.
+- **Update yt-dlp** (under *About*): when YouTube changes, downloads stop until yt-dlp, the tool that does the downloading, is updated. One click downloads the new version from GitHub, checked, and Offbeat starts using it. If you see a blocking or HTTP 403 error, start here.
 
 ---
 
@@ -154,7 +155,7 @@ After that, open **Offbeat** from the applications menu. To remove it: `bash scr
 Free, no account, no sign-up, no ads.
 
 **Does it send my data anywhere?**
-No. Offbeat runs on your computer. The only thing that goes to the internet is the download itself, from YouTube (and SponsorBlock, if you turn it on). No tracking of any kind.
+No. Offbeat runs on your computer. The only thing that goes to the internet is the download itself, from YouTube (and SponsorBlock, if you turn it on), plus fetching the new yt-dlp from GitHub, only when you click **Update yt-dlp**. No tracking of any kind.
 
 **Do I need YouTube Premium?**
 No. But note that YouTube's rules don't allow downloading outside its own apps, even for Premium users. **You are responsible for what you download.** Prefer music you have the right to keep, like your own uploads or songs with a free license (Creative Commons).
@@ -171,11 +172,11 @@ With the Balanced profile, about **255 songs per GB**. The footer shows the fold
 
 | Message | What to do |
 | --- | --- |
-| *YouTube is blocking anonymous access* | Wait a while and try again. If it keeps happening, Offbeat needs a newer yt-dlp (ask whoever installed it). |
+| *YouTube is blocking anonymous access* | Wait a while and try again. If it keeps happening, click **Update yt-dlp** in Settings. |
 | *This content requires sign-in* | The video or playlist is private or for members only. |
 | *Video unavailable* | It was removed, or it's blocked in your country. |
 | *Cannot reach YouTube* | Check your internet. |
-| *YouTube refused the download (HTTP 403)* | Offbeat needs a newer yt-dlp. |
+| *YouTube refused the download (HTTP 403)* | Click **Update yt-dlp** in Settings. |
 
 Every error has a **Details** link with the original message, handy if you ask someone for help.
 

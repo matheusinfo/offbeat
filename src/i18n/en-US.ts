@@ -136,14 +136,20 @@ export const enUS: Record<MessageKey, string> = {
   'settings.versionsLoading': 'Checking tools…',
   'settings.versionsFailed': 'Could not check the tools.',
   'settings.notFound': 'not found',
+  'settings.update': 'Update yt-dlp',
+  'settings.updating': 'Updating…',
+  'settings.updateHint': 'When YouTube changes, downloads stop working until yt-dlp is updated. Downloads the new version from GitHub.',
+  'settings.updatingHint': 'Downloading the new version from GitHub. It may take a minute.',
+  'settings.updated': 'yt-dlp updated to {version}.',
+  'settings.upToDate': 'yt-dlp is already the latest version ({version}).',
 
   'error.botCheck':
-    'YouTube is blocking anonymous access. Try again later; updating yt-dlp usually fixes it.',
+    'YouTube is blocking anonymous access. Try again later, or update yt-dlp in Settings.',
   'error.private':
     'This content requires sign-in (private or members-only video). For now the app only downloads public content.',
   'error.ffmpegMissing': 'Installation error: ffmpeg was not found. Reinstall the app.',
   'error.http403':
-    'YouTube refused the download (HTTP 403). This usually means yt-dlp is outdated; updating it should fix it.',
+    'YouTube refused the download (HTTP 403). This usually means yt-dlp is outdated: update it in Settings.',
   'error.unavailable': 'Video unavailable: it may have been removed or blocked in your region.',
   'error.network': 'Cannot reach YouTube. Check your connection and try again.',
   'error.unknown': 'The download failed. See the details.',
@@ -153,8 +159,8 @@ export const enUS: Record<MessageKey, string> = {
   'error.sidecarMissing':
     'Installation error: a required program was not found at the tested path (see details). Reinstall the app.',
   'error.spawnFailed': 'Could not start yt-dlp.',
-  'error.ytdlpFailed': 'yt-dlp failed. Try again; updating yt-dlp usually fixes it.',
-  'error.badOutput': 'yt-dlp returned something unexpected. Updating yt-dlp usually fixes it.',
+  'error.ytdlpFailed': 'yt-dlp failed. Try again, or update yt-dlp in Settings.',
+  'error.badOutput': 'yt-dlp returned something unexpected. Update yt-dlp in Settings.',
   'error.busy': 'Too many downloads are running. Try again in a moment.',
   'error.io': 'Error reading or writing files. Check the output folder and free space.',
 };

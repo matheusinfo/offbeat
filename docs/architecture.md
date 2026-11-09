@@ -24,7 +24,8 @@ O React só fala com o backend por comandos do Tauri e, durante um download, por
 | `output_dir_size` | | `number` | soma dos arquivos diretamente na pasta de saída |
 | `history_count` / `clear_history` | | `number` / | tamanho do histórico de downloads; apagá-lo |
 | `list_playlists` / `save_playlist` / `remove_playlist` | `{ playlist: {url, title} }` / `{ url }` | `SavedPlaylist[]` | playlists salvas; gravar e remover devolvem a lista atualizada |
-| `tool_versions` | | `ToolVersions` | versões de yt-dlp, ffmpeg e Deno (ou `null`) |
+| `tool_versions` | | `ToolVersions` | versões do yt-dlp em uso, do ffmpeg e do Deno (ou `null`) |
+| `update_ytdlp` | | `UpdateOutcome` | atualiza o yt-dlp (veja [ytdlp.md](ytdlp.md#atualizar-o-yt-dlp)); `busy` se já houver uma atualização rodando |
 
 Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `api.ts` e o front os traduz em [src/lib/errors.ts](../src/lib/errors.ts).
 
@@ -83,7 +84,7 @@ O id sai da URL da faixa (`watch?v=`, `youtu.be/`, `shorts/`). Um download com `
 - **URL validada nos dois lados**: só `http(s)`, hosts `youtube.com`, `www.`, `m.`, `music.youtube.com` e `youtu.be`; sem usuário/senha, porta, espaços ou caracteres de controle. Ids de download: `[A-Za-z0-9_-]{1,64}`.
 - **WebView com o mínimo** ([capabilities/default.json](../src-tauri/capabilities/default.json)): `core:default`, `dialog:allow-open` (seletor de pasta) e `clipboard-manager:allow-read-text` (colar o link ao focar). Sem shell, fs ou opener: quem lança processos e abre a pasta é o backend.
 - **CSP**: só recursos locais e imagens de `https://i.ytimg.com`. O backend também descarta miniaturas de outros domínios.
-- **Rede**: o app não faz chamadas próprias. O yt-dlp acessa o YouTube; com SponsorBlock ligado, também `sponsor.ajay.app`. Sem telemetria, conta ou relatório de falhas.
+- **Rede**: o app não faz chamadas próprias. O yt-dlp acessa o YouTube; com SponsorBlock ligado, também `sponsor.ajay.app`; e o GitHub, só quando o usuário clica em "Atualizar yt-dlp" (`yt-dlp -U`). Sem telemetria, conta, checagem automática de versão ou relatório de falhas.
 
 ## Decisões que mudaram em relação ao planejamento
 

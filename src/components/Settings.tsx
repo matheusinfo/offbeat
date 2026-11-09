@@ -1,7 +1,9 @@
 import { open } from '@tauri-apps/plugin-dialog';
-import { FolderOpen, Loader2, X } from 'lucide-react';
+import { FolderOpen, Loader2, RefreshCw, X } from 'lucide-react';
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { useI18n } from '../i18n';
+import { errorFromUnknown, type ItemError } from '../lib/errors';
+import { ErrorNote } from './ErrorNote';
 import {
   api,
   isAppError,
@@ -22,6 +24,11 @@ const PROFILES: Profile[] = ['original', 'balanced', 'economy'];
 const PATTERNS: FilenamePattern[] = ['title', 'artist-title'];
 
 type Versions = { state: 'loading' } | { state: 'failed' } | { state: 'ok'; value: ToolVersions };
+type Update =
+  | { state: 'idle' }
+  | { state: 'running' }
+  | { state: 'done'; updated: boolean; version: string }
+  | { state: 'failed'; error: ItemError };
 type History = { state: 'loading' } | { state: 'failed' } | { state: 'ok'; count: number; cleared: boolean };
 
 /** Mounted only while open; the native <dialog> gives focus trapping and Esc. */
@@ -35,6 +42,7 @@ export function Settings({ settings, onClose, onSaved }: Props) {
   const [saveError, setSaveError] = useState<string[] | null>(null);
   const [versions, setVersions] = useState<Versions>({ state: 'loading' });
   const [history, setHistory] = useState<History>({ state: 'loading' });
+  const [update, setUpdate] = useState<Update>({ state: 'idle' });
 
   // No close() on cleanup: it fires an async "close" event, and under
   // StrictMode (mount, unmount, mount) that event lands after the remount and
@@ -45,16 +53,35 @@ export function Settings({ settings, onClose, onSaved }: Props) {
     if (dialog && !dialog.open) dialog.showModal();
   }, []);
 
+  // Set again on every mount: StrictMode mounts, unmounts and mounts again.
+  const alive = useRef(true);
   useEffect(() => {
-    let alive = true;
-    api
-      .toolVersions()
-      .then((value) => alive && setVersions({ state: 'ok', value }))
-      .catch(() => alive && setVersions({ state: 'failed' }));
+    alive.current = true;
     return () => {
-      alive = false;
+      alive.current = false;
     };
   }, []);
+
+  function loadVersions() {
+    api
+      .toolVersions()
+      .then((value) => alive.current && setVersions({ state: 'ok', value }))
+      .catch(() => alive.current && setVersions({ state: 'failed' }));
+  }
+
+  useEffect(loadVersions, []);
+
+  async function updateYtdlp() {
+    setUpdate({ state: 'running' });
+    try {
+      const outcome = await api.updateYtdlp();
+      if (!alive.current) return;
+      setUpdate({ state: 'done', ...outcome });
+      loadVersions();
+    } catch (e: unknown) {
+      if (alive.current) setUpdate({ state: 'failed', error: errorFromUnknown(e) });
+    }
+  }
 
   useEffect(() => {
     let alive = true;
@@ -281,6 +308,30 @@ export function Settings({ settings, onClose, onSaved }: Props) {
                   deno: versions.value.deno ?? notFound,
                 })}
             </p>
+            <div className="settings__update">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => void updateYtdlp()}
+                disabled={update.state === 'running'}
+              >
+                {update.state === 'running' ? (
+                  <Loader2 size={16} className="spin" aria-hidden="true" />
+                ) : (
+                  <RefreshCw size={16} aria-hidden="true" />
+                )}
+                <span>{update.state === 'running' ? t('settings.updating') : t('settings.update')}</span>
+              </button>
+              <p className="hint" aria-live="polite">
+                {update.state === 'idle' && t('settings.updateHint')}
+                {update.state === 'running' && t('settings.updatingHint')}
+                {update.state === 'done' &&
+                  (update.updated
+                    ? t('settings.updated', { version: update.version })
+                    : t('settings.upToDate', { version: update.version }))}
+              </p>
+            </div>
+            {update.state === 'failed' && <ErrorNote error={update.error} />}
           </div>
 
           <div aria-live="polite">

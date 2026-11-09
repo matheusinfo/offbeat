@@ -2,6 +2,7 @@ use crate::error::AppResult;
 use crate::history;
 use crate::playlists::{self, SavedPlaylist};
 use crate::settings::Settings;
+use crate::sidecar::{self, Tool};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
@@ -18,6 +19,8 @@ pub struct Paths {
     pub history_file: PathBuf,
     /// ~/.local/share/offbeat/playlists.json
     pub playlists_file: PathBuf,
+    /// ~/.local/share/offbeat/bin: the yt-dlp updated from the app.
+    pub bin_dir: PathBuf,
 }
 
 /// Cancellation handle of a running download.
@@ -44,6 +47,18 @@ pub struct AppState {
     /// Ids of downloaded videos; mirrors history_file.
     history: Mutex<HashSet<String>>,
     playlists: Mutex<Vec<SavedPlaylist>>,
+    /// The updated yt-dlp, while it is newer than the bundled one.
+    ytdlp_override: Mutex<Option<PathBuf>>,
+    updating: AtomicBool,
+}
+
+/// Clears the "updating" flag when the update ends, however it ends.
+pub struct UpdateGuard<'a>(&'a AtomicBool);
+
+impl Drop for UpdateGuard<'_> {
+    fn drop(&mut self) {
+        self.0.store(false, Ordering::SeqCst);
+    }
 }
 
 // A panic while holding a lock must not take every later command down with it.
@@ -61,7 +76,29 @@ impl AppState {
             jobs: Mutex::new(HashMap::new()),
             history: Mutex::new(history),
             playlists: Mutex::new(saved),
+            ytdlp_override: Mutex::new(None),
+            updating: AtomicBool::new(false),
         }
+    }
+
+    /// The yt-dlp to run: the updated copy when there is one, else the bundled.
+    pub fn ytdlp_path(&self) -> AppResult<PathBuf> {
+        match lock(&self.ytdlp_override).clone() {
+            Some(path) if path.is_file() => Ok(path),
+            _ => sidecar::path(Tool::YtDlp),
+        }
+    }
+
+    pub fn set_ytdlp_override(&self, path: Option<PathBuf>) {
+        *lock(&self.ytdlp_override) = path;
+    }
+
+    /// None if an update is already running.
+    pub fn begin_update(&self) -> Option<UpdateGuard<'_>> {
+        self.updating
+            .compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
+            .ok()
+            .map(|_| UpdateGuard(&self.updating))
     }
 
     pub fn playlists(&self) -> Vec<SavedPlaylist> {

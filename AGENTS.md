@@ -14,7 +14,7 @@ Offbeat é um app desktop para Linux (Tauri 2 + React 19 + TypeScript, backend e
 2. Commits em inglês, no estilo conventional commits do histórico (`feat:`, `fix:`, `build:`, `docs:`, `chore:`): título curto e corpo com bullets. Um commit por funcionalidade. **Sem linha de co-autoria.**
 3. **Verifique antes de commitar**: os comandos de [docs/development.md](docs/development.md#verificação-obrigatória-antes-do-commit), sem erros nem warnings novos. Lógica nova testável ganha teste (`tests/` no front, `#[cfg(test)]` no Rust).
 4. Mudança visual ou de fluxo pede teste no app (`npm run tauri dev`) com um vídeo curto e uma playlist pequena. Se não deu para testar, diga isso claramente em vez de afirmar que funciona.
-5. Não quebre a promessa de privacidade: nenhuma chamada de rede própria do app. Os únicos acessos são os do yt-dlp ao YouTube (e ao SponsorBlock, quando o usuário liga). Veja [docs/architecture.md](docs/architecture.md#segurança-e-privacidade).
+5. Não quebre a promessa de privacidade: nenhuma chamada de rede própria do app. Os únicos acessos são os do yt-dlp: ao YouTube, ao SponsorBlock (quando o usuário liga) e ao GitHub (só no clique em "Atualizar yt-dlp"). Veja [docs/architecture.md](docs/architecture.md#segurança-e-privacidade).
 6. **O usuário usa o app instalado** (AppImage em `~/Applications`, atalho no menu). Depois de mudanças que ele vai usar, atualize a instalação ([docs/recipes.md](docs/recipes.md#atualizar-o-app-instalado)) e **avise antes que o empacotamento leva cerca de 10 minutos**, para não parecer travado.
 7. O agente não tem `sudo`: peça ao usuário para rodar esses comandos com `!` no prompt ([docs/recipes.md](docs/recipes.md#comandos-que-precisam-de-sudo)).
 

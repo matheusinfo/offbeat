@@ -120,6 +120,13 @@ export interface ToolVersions {
   deno: string | null;
 }
 
+export interface UpdateOutcome {
+  /** true when a newer yt-dlp is now in use. */
+  updated: boolean;
+  /** Version of the yt-dlp now in use. */
+  version: string;
+}
+
 export function isAppError(e: unknown): e is AppError {
   return typeof e === 'object' && e !== null && 'code' in e && 'message' in e;
 }
@@ -149,6 +156,12 @@ export const api = {
   outputDirSize: () => invoke<number>('output_dir_size'),
 
   toolVersions: () => invoke<ToolVersions>('tool_versions'),
+
+  /**
+   * Updates yt-dlp with its own updater (downloads from github.com, checked
+   * against the release's SHA-256 list). The app's only network access.
+   */
+  updateYtdlp: () => invoke<UpdateOutcome>('update_ytdlp'),
 
   /** Number of videos in the download history. */
   historyCount: () => invoke<number>('history_count'),
