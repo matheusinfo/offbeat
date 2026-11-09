@@ -11,10 +11,17 @@ export const ptBR = {
   'header.settings': 'Configurações',
 
   'url.label': 'Link do YouTube',
-  'url.placeholder': 'Cole o link de uma música ou playlist',
+  'url.placeholder': 'Cole um ou mais links de música, álbum ou playlist',
   'url.submit': 'Visualizar',
   'url.loading': 'Buscando informações…',
-  'url.invalid': 'Use um link de youtube.com, music.youtube.com ou youtu.be.',
+  'url.invalid': 'Use links de youtube.com, music.youtube.com ou youtu.be, separados por espaço.',
+  'url.tooMany': 'Cole no máximo {max} links de uma vez.',
+
+  'previews.count': '{count} links',
+  'previews.downloadAll': 'Baixar tudo ({count} faixas)',
+  'previews.clearAll': 'Limpar tudo',
+  'previews.loadingLink': 'Buscando {url}…',
+  'previews.remove': 'Remover {url}',
 
   'preview.label': 'Pré-visualização',
   'preview.video': 'Vídeo',

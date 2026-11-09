@@ -60,6 +60,8 @@ Songs from YouTube Music come out especially nice: they bring the **album name**
 
 Copy the link of a song, album or playlist. In Offbeat, **click the link box**: if the link is already copied, it pastes itself. Then click **Preview**.
 
+Want several at once? Paste **several links separated by spaces** (or copy a list, one link per line). Offbeat shows each one, and **Download all** queues them all.
+
 <p align="center"><img src="docs/images/paste-en.png" width="380" alt="The link box with a YouTube Music link" /></p>
 
 ### 2. Check what you're getting

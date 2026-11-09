@@ -1,6 +1,8 @@
-import { Download, ListMusic, Music, X } from 'lucide-react';
+import { Download, ListMusic, Loader2, Music, X } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type { Preview as PreviewData, Profile } from '../lib/api';
+import type { ItemError } from '../lib/errors';
+import { ErrorNote } from './ErrorNote';
 import { formatBytes, formatDuration, formatIndex } from '../lib/format';
 import { estimateEntries } from '../lib/ytdlp';
 
@@ -88,6 +90,31 @@ export function Preview({ preview, profile, onDownload, onClear }: Props) {
           <span>{isPlaylist && count > 1 ? t('preview.downloadMany', { count }) : t('preview.download')}</span>
         </button>
       </div>
+    </section>
+  );
+}
+
+/** A pasted link still loading or that failed, shown when several were pasted. */
+export function LinkStatus({ url, error, onRemove }: { url: string; error: ItemError | null; onRemove: () => void }) {
+  const { t } = useI18n();
+  return (
+    <section className="card link-status" aria-label={url}>
+      <div className="link-status__main">
+        {error === null && <Loader2 size={16} className="spin" aria-hidden="true" />}
+        <p className="link-status__url" title={url}>
+          {error === null ? t('previews.loadingLink', { url }) : url}
+        </p>
+        <button
+          type="button"
+          className="icon-btn"
+          onClick={onRemove}
+          aria-label={t('previews.remove', { url })}
+          title={t('previews.remove', { url })}
+        >
+          <X size={16} aria-hidden="true" />
+        </button>
+      </div>
+      {error !== null && <ErrorNote error={error} />}
     </section>
   );
 }

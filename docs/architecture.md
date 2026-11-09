@@ -28,7 +28,7 @@ Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `
 
 ## Fluxo de um download
 
-1. O usuário cola a URL. O front valida (`isSupportedUrl`) e chama `preview`. O backend valida de novo.
+1. O usuário cola um ou mais links. O front valida (`parseLinks`) e chama `preview` para cada um, dois por vez. O backend valida de novo. O estado de cada link (carregando, pronto ou erro) é um reducer puro ([previews.ts](../src/lib/previews.ts)); respostas de uma colagem antiga são descartadas.
 2. Na pré-visualização, "Baixar" põe na fila **uma entrada por faixa**: playlist e álbum viram N itens com `index` = posição (1, 2, …); vídeo único tem `index: null`.
 3. O executor da fila ([App.tsx](../src/App.tsx), `useDownloadRunner`) mantém no máximo **2 downloads simultâneos** (`MAX_CONCURRENT` em [queue.ts](../src/lib/queue.ts)).
 4. Para cada item, `download` roda um yt-dlp com `--no-playlist` na URL da faixa. Um processo por faixa dá progresso, cancelamento, erro e "tentar de novo" por faixa.

@@ -10,10 +10,17 @@ export const enUS: Record<MessageKey, string> = {
   'header.settings': 'Settings',
 
   'url.label': 'YouTube link',
-  'url.placeholder': 'Paste a song or playlist link',
+  'url.placeholder': 'Paste one or more song, album or playlist links',
   'url.submit': 'Preview',
   'url.loading': 'Fetching details…',
-  'url.invalid': 'Use a youtube.com, music.youtube.com or youtu.be link.',
+  'url.invalid': 'Use youtube.com, music.youtube.com or youtu.be links, separated by spaces.',
+  'url.tooMany': 'Paste at most {max} links at once.',
+
+  'previews.count': '{count} links',
+  'previews.downloadAll': 'Download all ({count} tracks)',
+  'previews.clearAll': 'Clear all',
+  'previews.loadingLink': 'Fetching {url}…',
+  'previews.remove': 'Remove {url}',
 
   'preview.label': 'Preview',
   'preview.video': 'Video',

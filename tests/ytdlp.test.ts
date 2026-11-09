@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { estimateBytes, estimateEntries, isSupportedUrl, parseSupportedUrl } from '../src/lib/ytdlp';
+import { estimateBytes, estimateEntries, isSupportedUrl, parseLinks, parseSupportedUrl } from '../src/lib/ytdlp';
 
 describe('isSupportedUrl', () => {
   it.each([
@@ -47,5 +47,22 @@ describe('size estimate', () => {
     expect(estimateEntries([60, null, 120], 'balanced')).toEqual({ bytes: 3_000_000, unknownCount: 1 });
     expect(estimateEntries([null, null], 'balanced')).toBeNull();
     expect(estimateEntries([], 'balanced')).toBeNull();
+  });
+});
+
+describe('parseLinks', () => {
+  it('splits links on spaces and line breaks and drops duplicates', () => {
+    expect(parseLinks(' https://youtu.be/a\nhttps://youtu.be/b  https://youtu.be/a\r\n')).toEqual({
+      urls: ['https://youtu.be/a', 'https://youtu.be/b'],
+      invalid: [],
+    });
+  });
+
+  it('reports words that are not links', () => {
+    expect(parseLinks('https://youtu.be/a and https://vimeo.com/1')).toEqual({
+      urls: ['https://youtu.be/a'],
+      invalid: ['and', 'https://vimeo.com/1'],
+    });
+    expect(parseLinks('   ')).toEqual({ urls: [], invalid: [] });
   });
 });

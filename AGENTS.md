@@ -44,7 +44,8 @@ src/lib/api.ts              contrato com o backend: tipos e comandos (espelhados
 src/App.tsx                 tela única, carga das configurações, executor da fila (2 downloads por vez)
 src/components/             UrlInput, Preview, Queue, Settings (modal), ErrorNote
 src/lib/                    lógica pura e testada: ytdlp (URL, estimativa), progress (linhas PROG/POST/DONE),
-                            queue (reducer da fila), errors (classifica o stderr), format (Intl)
+                            queue (reducer da fila), previews (links colados → itens da fila),
+                            errors (classifica o stderr), format (Intl)
 src/i18n/                   pt-BR.ts (fonte das chaves), en-US.ts, translate.ts, index.tsx (provider)
 src/styles.css              tokens de cor claro/escuro (segue o sistema)
 src-tauri/src/lib.rs        builder do Tauri, plugins, estado, limpeza da pasta temporária

@@ -32,6 +32,29 @@ export function isSupportedUrl(raw: string): boolean {
   return parseSupportedUrl(raw) !== null;
 }
 
+/** Links previewed at once; more than this is almost surely a pasting mistake. */
+export const MAX_LINKS = 20;
+
+export interface ParsedLinks {
+  /** Supported URLs in the order pasted, without duplicates. */
+  urls: string[];
+  /** Words that are not supported links. */
+  invalid: string[];
+}
+
+/** Splits pasted text (spaces or line breaks) into YouTube links. */
+export function parseLinks(raw: string): ParsedLinks {
+  const urls: string[] = [];
+  const invalid: string[] = [];
+  for (const word of raw.split(/\s+/)) {
+    if (word === '') continue;
+    const url = parseSupportedUrl(word);
+    if (url === null) invalid.push(word);
+    else if (!urls.includes(url)) urls.push(url);
+  }
+  return { urls, invalid };
+}
+
 /** MB (10^6 bytes) per minute, from the planning doc's "Tamanho por perfil" table. */
 export const MB_PER_MINUTE: Record<Profile, number> = {
   original: 0.96,

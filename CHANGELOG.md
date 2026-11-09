@@ -16,8 +16,8 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - **Mensagens de erro claras** para bloqueio do YouTube, conteúdo privado, vídeo indisponível, falta de internet e HTTP 403, com os detalhes originais à mão.
 - Tema claro e escuro seguindo o sistema.
 - **Instalação sem sudo.** `npm run install-desktop` instala o AppImage para o seu usuário, com o comando `offbeat` e o Offbeat no menu de aplicativos.
-
 - **Licenças junto com o app.** Os pacotes trazem uma pasta `licenses` com as licenças do Offbeat, do yt-dlp, do FFmpeg, do Deno e de todas as bibliotecas usadas, e o [NOTICE](NOTICE) diz onde achar o código-fonte do FFmpeg empacotado. Os READMEs ganharam um aviso legal: uso permitido, nada de DRM e marcas de terceiros.
+- **Vários links de uma vez.** Cole vários links separados por espaço (ou uma lista copiada, um por linha): cada um ganha a sua pré-visualização, e **Baixar tudo** põe todas as faixas na fila.
 
 ### Correções
 

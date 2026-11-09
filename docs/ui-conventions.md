@@ -8,8 +8,8 @@ Uma tela só, em uma coluna (janela de 560×720, mínimo 420 de largura):
 
 | Componente | Papel |
 | --- | --- |
-| [UrlInput](../src/components/UrlInput.tsx) | campo + "Visualizar". Valida com `isSupportedUrl`; ao focar o campo vazio, cola da área de transferência se for link suportado |
-| [Preview](../src/components/Preview.tsx) | capa, título, canal, duração, nº de faixas (lista recolhível), tamanho estimado e "Baixar" |
+| [UrlInput](../src/components/UrlInput.tsx) | campo + "Visualizar". Aceita um ou mais links separados por espaço (`parseLinks`, até `MAX_LINKS` = 20). Ao colar várias linhas, troca as quebras por espaços (o `<input>` as apagaria e grudaria os links). Ao focar o campo vazio, cola da área de transferência se só houver links suportados |
+| [Preview](../src/components/Preview.tsx) | capa, título, canal, duração, nº de faixas (lista recolhível), tamanho estimado e "Baixar". `LinkStatus`: cartão de um link ainda carregando ou com erro, quando foram colados vários |
 | [Queue](../src/components/Queue.tsx) | itens com barra, %, velocidade e tempo restante; cancelar, tentar de novo, remover, "Cancelar tudo", "Limpar concluídos" |
 | [Settings](../src/components/Settings.tsx) | `<dialog>` modal: pasta, perfil, nome do arquivo, SponsorBlock, idioma e versões das ferramentas |
 | [ErrorNote](../src/components/ErrorNote.tsx) | mensagem traduzida + "Detalhes" com a linha original do stderr |

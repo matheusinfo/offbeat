@@ -60,6 +60,8 @@ As músicas do YouTube Music saem especialmente caprichadas: vêm com o **nome d
 
 Copie o link de uma música, álbum ou playlist. No Offbeat, **clique na caixa do link**: se o link já estiver copiado, ele se cola sozinho. Depois clique em **Visualizar**.
 
+Quer baixar vários de uma vez? Cole **vários links separados por espaço** (ou copie uma lista, um link por linha). O Offbeat mostra cada um e o botão **Baixar tudo** põe todos na fila.
+
 <p align="center"><img src="docs/images/paste-pt.png" width="380" alt="A caixa do link com um link do YouTube Music" /></p>
 
 ### 2. Confira o que vai baixar

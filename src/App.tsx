@@ -1,12 +1,20 @@
-import { FolderOpen, Loader2, Settings as SettingsIcon } from 'lucide-react';
+import { Download, FolderOpen, Loader2, Settings as SettingsIcon, X } from 'lucide-react';
 import { useCallback, useEffect, useReducer, useRef, useState, type Dispatch } from 'react';
-import { Preview } from './components/Preview';
+import { LinkStatus, Preview } from './components/Preview';
 import { Queue } from './components/Queue';
 import { Settings } from './components/Settings';
 import { UrlInput } from './components/UrlInput';
 import { I18nProvider, useI18n } from './i18n';
 import { api, type Preview as PreviewData, type Settings as SettingsData } from './lib/api';
 import { errorFromUnknown, type ItemError } from './lib/errors';
+import {
+  initialPreviews,
+  isLoading,
+  itemsFor,
+  previewsReducer,
+  readyPreviews,
+  trackCount,
+} from './lib/previews';
 import { formatBytes } from './lib/format';
 import { parseLine } from './lib/progress';
 import {
@@ -16,10 +24,12 @@ import {
   selectStartable,
   summarize,
   type LineUpdate,
-  type NewItem,
   type QueueAction,
   type QueueItem,
 } from './lib/queue';
+
+/** Previews asked of yt-dlp at the same time when several links are pasted. */
+const PREVIEW_CONCURRENCY = 2;
 
 type Loaded = { state: 'loading' } | { state: 'failed'; error: ItemError } | { state: 'ok'; settings: SettingsData };
 
@@ -79,11 +89,13 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [url, setUrl] = useState('');
-  const [previewing, setPreviewing] = useState(false);
-  const [preview, setPreview] = useState<PreviewData | null>(null);
-  const [previewError, setPreviewError] = useState<ItemError | null>(null);
-  // Only the latest preview request may update the screen.
-  const previewSeq = useRef(0);
+  const [previews, dispatchPreviews] = useReducer(previewsReducer, initialPreviews);
+  // Only answers for the latest paste may update the screen.
+  const previewBatch = useRef(0);
+  const previewing = isLoading(previews);
+  const ready = readyPreviews(previews);
+  const single = previews.slots.length === 1 ? previews.slots[0] : undefined;
+  const singleError: ItemError | null = single?.state === 'error' ? single.error : null;
 
   const [queue, dispatch] = useReducer(queueReducer, initialQueue);
   useDownloadRunner(queue.items, dispatch);
@@ -107,34 +119,43 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
     };
   }, [settings.outputDir, doneCount]);
 
-  function submitPreview(target: string) {
-    const seq = ++previewSeq.current;
-    setPreviewing(true);
-    setPreview(null);
-    setPreviewError(null);
-    api
-      .preview(target)
-      .then((p) => seq === previewSeq.current && setPreview(p))
-      .catch((e: unknown) => seq === previewSeq.current && setPreviewError(errorFromUnknown(e)))
-      .finally(() => seq === previewSeq.current && setPreviewing(false));
+  function submitPreview(urls: string[]) {
+    const batch = ++previewBatch.current;
+    dispatchPreviews({ type: 'start', batch, urls });
+    const pending = [...urls];
+    const worker = async () => {
+      for (let target = pending.shift(); target !== undefined; target = pending.shift()) {
+        if (batch !== previewBatch.current) return;
+        const key = target;
+        try {
+          const preview = await api.preview(target);
+          dispatchPreviews({ type: 'resolved', batch, key, preview });
+        } catch (e: unknown) {
+          dispatchPreviews({ type: 'failed', batch, key, error: errorFromUnknown(e) });
+        }
+      }
+    };
+    for (let i = 0; i < Math.min(PREVIEW_CONCURRENCY, urls.length); i++) void worker();
   }
 
-  function clearPreview() {
-    previewSeq.current++;
-    setPreview(null);
-    setPreviewError(null);
-    setPreviewing(false);
+  function clearPreviews() {
+    dispatchPreviews({ type: 'clear', batch: ++previewBatch.current });
     setUrl('');
   }
 
-  function enqueuePreview() {
-    if (!preview) return;
-    const items: NewItem[] =
-      preview.kind === 'playlist'
-        ? preview.entries.map((e, i) => ({ id: newId(), url: e.url, title: e.title, index: i + 1 }))
-        : [{ id: newId(), url: preview.url, title: preview.title, index: null }];
-    dispatch({ type: 'add', items });
-    clearPreview();
+  function removePreview(key: string) {
+    if (previews.slots.length <= 1) clearPreviews();
+    else dispatchPreviews({ type: 'remove', key });
+  }
+
+  function enqueue(preview: PreviewData, key: string) {
+    dispatch({ type: 'add', items: itemsFor(preview, newId) });
+    removePreview(key);
+  }
+
+  function enqueueAll() {
+    dispatch({ type: 'add', items: ready.flatMap((p) => itemsFor(p, newId)) });
+    clearPreviews();
   }
 
   async function openFolder() {
@@ -168,10 +189,45 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
           onChange={setUrl}
           onSubmit={submitPreview}
           loading={previewing}
-          error={previewError}
+          error={singleError}
         />
-        {preview && (
-          <Preview preview={preview} profile={settings.profile} onDownload={enqueuePreview} onClear={clearPreview} />
+        {previews.slots.length > 1 && (
+          <div className="previews__bar">
+            <p className="muted">{t('previews.count', { count: previews.slots.length })}</p>
+            <div className="previews__bar-actions">
+              <button type="button" className="btn" onClick={clearPreviews}>
+                <X size={16} aria-hidden="true" />
+                <span>{t('previews.clearAll')}</span>
+              </button>
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={enqueueAll}
+                disabled={previewing || ready.length === 0}
+              >
+                <Download size={16} aria-hidden="true" />
+                <span>{t('previews.downloadAll', { count: ready.reduce((n, p) => n + trackCount(p), 0) })}</span>
+              </button>
+            </div>
+          </div>
+        )}
+        {previews.slots.map((slot) =>
+          slot.state === 'ok' ? (
+            <Preview
+              key={slot.key}
+              preview={slot.preview}
+              profile={settings.profile}
+              onDownload={() => enqueue(slot.preview, slot.key)}
+              onClear={() => removePreview(slot.key)}
+            />
+          ) : previews.slots.length > 1 ? (
+            <LinkStatus
+              key={slot.key}
+              url={slot.url}
+              error={slot.state === 'error' ? slot.error : null}
+              onRemove={() => removePreview(slot.key)}
+            />
+          ) : null,
         )}
         <Queue
           queue={queue}

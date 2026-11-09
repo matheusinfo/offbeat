@@ -11,6 +11,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - YouTube Music: playlists, álbuns (`browse/…`) e links com `&list=`, com tags de álbum e número da faixa
 - Interface em pt-BR e en-US; tema claro/escuro seguindo o sistema
 - AppImage instalável para o usuário, com atalho no menu (`npm run install-desktop`)
+- Vários links de uma vez, com uma pré-visualização para cada e "Baixar tudo"
 
 ## Pendente
 
