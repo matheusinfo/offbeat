@@ -46,6 +46,8 @@ yt-dlp --ignore-config --no-color --no-playlist --newline --progress --no-simula
 | `balanced` (padrão) | `-f bestaudio -x --audio-format mp3 --audio-quality 5` | LAME VBR V5, ~130 kbps |
 | `economy` | `-f bestaudio -x --audio-format mp3 --audio-quality 7` | LAME VBR V7, ~100 kbps |
 
+**No relógio:** os MP3 do perfil Equilibrado tocam no Huawei Watch GT 5 (9/11/2026, 119 faixas pelo Huawei Health). O M4A do Original ainda não foi testado.
+
 A estimativa de tamanho na pré-visualização usa MB por minuto do planejamento (0,96 / 1,0 / 0,75) em [src/lib/ytdlp.ts](../src/lib/ytdlp.ts). Num álbum de teste de 42:58 no perfil Equilibrado, a estimativa foi 43,0 MB e o resultado real, 41 MB.
 
 ### Um capítulo por faixa (`section`)

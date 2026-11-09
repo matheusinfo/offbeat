@@ -68,7 +68,7 @@ O id sai da URL da faixa (`watch?v=`, `youtu.be/`, `shorts/`). Um download com `
 | Campo | Valores | Padrão |
 | --- | --- | --- |
 | `outputDir` | caminho absoluto | pasta Música do sistema (`XDG_MUSIC_DIR`) + `/Offbeat` |
-| `profile` | `original`, `balanced`, `economy` | `balanced` (M4A no GT 5 ainda não foi testado) |
+| `profile` | `original`, `balanced`, `economy` | `balanced` (MP3 confirmado no GT 5; M4A ainda não testado) |
 | `filenamePattern` | `title`, `artist-title` | `title` |
 | `sponsorblock` | booleano | `false` |
 | `normalizeVolume` | booleano (ignorado no perfil `original`) | `false` |

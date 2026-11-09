@@ -30,7 +30,7 @@ Imagine you want to go for a run with music, but **without carrying your phone**
 
 Each file comes with the **song name, the artist, the album, the track number and the cover picture**, so everything looks tidy on the watch. And the files are **small**: about 1 MB per minute of music, so a lot of songs fit.
 
-> Offbeat was made for a **Huawei Watch GT 5**, but the files are regular MP3s and work on almost any watch or music player.
+> Offbeat was made for a **Huawei Watch GT 5**, and the MP3s from the Balanced profile have been tested on it. They are regular MP3s that work on almost any watch or music player.
 
 ---
 

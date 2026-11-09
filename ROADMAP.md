@@ -22,7 +22,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 
 ## Pendente
 
-**Antes de tudo: prova no relógio.** Mandar 3 faixas do perfil Original (M4A) e 3 do Equilibrado (MP3) pelo Huawei Health e conferir se tocam, se mostram título e capa e quanto ocupam. Se o GT 5 tocar M4A, o Original vira o perfil padrão (passo a passo em [docs/recipes.md](docs/recipes.md#depois-do-teste-no-relógio-m4a-no-gt-5)).
+**Prova no relógio: MP3 confirmado.** Em 9/11/2026, as 119 faixas MP3 do perfil Equilibrado tocaram no GT 5 pelo Huawei Health. Falta mandar algumas do perfil Original (M4A): se tocarem, o Original pode virar o padrão (passo a passo em [docs/recipes.md](docs/recipes.md#depois-do-teste-no-relógio-m4a-no-gt-5)).
 
 | Ideia | Por quê | Esforço |
 |---|---|---|

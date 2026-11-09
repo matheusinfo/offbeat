@@ -22,7 +22,7 @@ Offbeat é um app desktop para Linux (Tauri 2 + React 19 + TypeScript, backend e
 
 - **Versão 0.1.0** (MVP do planejamento + YouTube Music), instalada como AppImage na máquina do usuário. Testada no app com vídeo, álbum do YouTube Music, cancelamento, erros e troca de idioma.
 - Depois do MVP (ainda na 0.1.0, não publicada): vários links de uma vez, "Só esta faixa", volume igual, capítulos em faixas, histórico (pular já baixadas), playlists salvas com sincronização, atualizar o yt-dlp pelo app e notificação de fila concluída. Testados numa instância isolada com o álbum CC de Kevin MacLeod e um vídeo CC com 20 capítulos. A atualização de fato do yt-dlp só foi vista pela linha de comando (no app, a versão já era a mais recente).
-- **Pendência principal:** o teste no relógio (o GT 5 toca M4A?). Ele decide o perfil padrão; o que fazer com o resultado está em [docs/recipes.md](docs/recipes.md#depois-do-teste-no-relógio-m4a-no-gt-5).
+- **Teste no relógio (9/11/2026):** as 119 faixas MP3 do perfil Equilibrado, baixadas com o app instalado, tocaram no GT 5. O Equilibrado continua o padrão. **Falta só testar M4A** (perfil Original): se tocar, ele pode virar o padrão ([docs/recipes.md](docs/recipes.md#depois-do-teste-no-relógio-m4a-no-gt-5)).
 - Próximas ideias, em ordem, no [ROADMAP.md](ROADMAP.md).
 
 ## Comandos

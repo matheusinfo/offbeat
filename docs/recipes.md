@@ -22,7 +22,7 @@ O agente não tem `sudo`. Peça ao usuário para rodar o comando no prompt com `
 
 ## Depois do teste no relógio (M4A no GT 5)
 
-Pendência do [ROADMAP](../ROADMAP.md): mandar faixas do perfil Original (M4A) e do Equilibrado (MP3) pelo Huawei Health e ver se tocam, se mostram título e capa e quanto ocupam.
+Pendência do [ROADMAP](../ROADMAP.md). **O MP3 do Equilibrado já foi confirmado** (9/11/2026: 119 faixas tocaram no GT 5). Falta mandar faixas do perfil Original (M4A) pelo Huawei Health e ver se tocam, se mostram título e capa e quanto ocupam.
 
 **Se o GT 5 tocar M4A**, o Original vira o padrão:
 

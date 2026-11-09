@@ -30,7 +30,7 @@ Imagine que você quer sair para correr com música, mas **sem levar o celular**
 
 Cada arquivo vem com **nome da música, artista, álbum, número da faixa e a capa**, então tudo aparece organizado no relógio. E os arquivos são **pequenos**: cerca de 1 MB por minuto de música, então cabe muita coisa.
 
-> O Offbeat foi feito para um **Huawei Watch GT 5**, mas os arquivos são MP3 comuns e funcionam em quase qualquer relógio ou tocador de música.
+> O Offbeat foi feito para um **Huawei Watch GT 5**, e os MP3 do perfil Equilibrado já foram testados nele. São MP3 comuns, que funcionam em quase qualquer relógio ou tocador de música.
 
 ---
 

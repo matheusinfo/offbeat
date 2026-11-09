@@ -25,6 +25,7 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - **Playlists salvas.** **Salvar playlist** na pré-visualização guarda a playlist; em **Playlists salvas**, **Sincronizar** (ou **Sincronizar todas**) põe na fila só as músicas que ainda não foram baixadas.
 - **Atualizar o yt-dlp pelo app.** Botão nas Configurações (*Sobre*) que atualiza o yt-dlp com o atualizador dele mesmo, conferido pela lista SHA-256 do release, sem reinstalar o Offbeat. As mensagens de erro de bloqueio e HTTP 403 apontam para ele. É o único acesso à rede do próprio app, e só acontece no clique.
 - **Aviso de fila concluída.** Quando os downloads terminam com a janela em segundo plano, o sistema mostra uma notificação com quantas músicas ficaram prontas (e quantas deram erro).
+- **Testado no relógio.** Os MP3 do perfil Equilibrado tocam no Huawei Watch GT 5 (119 faixas, pelo Huawei Health).
 
 ### Correções
 
