@@ -16,6 +16,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - Volume igual em todas as músicas (`loudnorm` na mesma codificação do MP3)
 - Vídeos com capítulos divididos em uma faixa por capítulo (`--download-sections`)
 - Histórico de downloads: pular o que já foi baixado, "Baixar N novas" e "Baixar de novo"
+- Playlists salvas com "Sincronizar", que põe na fila só as músicas novas
 
 ## Pendente
 
@@ -23,7 +24,6 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 
 | Ideia | Por quê | Esforço |
 |---|---|---|
-| Playlists salvas: um clique para buscar só as faixas novas | Sincronizar uma playlist que cresce | Médio |
 | Cookies do navegador (`--cookies-from-browser`) | Playlists privadas e "Músicas curtidas" do YouTube Music | Médio |
 | Atualizar o yt-dlp pelo app (`~/.local/share/offbeat/bin/`, conferindo `SHA2-256SUMS`) | O YouTube quebra versões antigas em semanas | Médio |
 | Perfil Econômico mono | ~2 MB por música, para quem usa um fone só | Baixo |

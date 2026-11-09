@@ -1,5 +1,6 @@
 use crate::error::AppResult;
 use crate::history;
+use crate::playlists::{self, SavedPlaylist};
 use crate::settings::Settings;
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -15,6 +16,8 @@ pub struct Paths {
     pub temp_root: PathBuf,
     /// ~/.local/share/offbeat/history.txt, in yt-dlp's archive format.
     pub history_file: PathBuf,
+    /// ~/.local/share/offbeat/playlists.json
+    pub playlists_file: PathBuf,
 }
 
 /// Cancellation handle of a running download.
@@ -40,6 +43,7 @@ pub struct AppState {
     jobs: Mutex<HashMap<String, Arc<Job>>>,
     /// Ids of downloaded videos; mirrors history_file.
     history: Mutex<HashSet<String>>,
+    playlists: Mutex<Vec<SavedPlaylist>>,
 }
 
 // A panic while holding a lock must not take every later command down with it.
@@ -50,12 +54,31 @@ fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
 impl AppState {
     pub fn new(paths: Paths, settings: Settings) -> Self {
         let history = history::load(&paths.history_file);
+        let saved = playlists::load(&paths.playlists_file);
         Self {
             paths,
             settings: Mutex::new(settings),
             jobs: Mutex::new(HashMap::new()),
             history: Mutex::new(history),
+            playlists: Mutex::new(saved),
         }
+    }
+
+    pub fn playlists(&self) -> Vec<SavedPlaylist> {
+        lock(&self.playlists).clone()
+    }
+
+    /// Applies `change` to a copy and keeps it only if it succeeds (including
+    /// writing the file), so memory and disk never disagree.
+    pub fn update_playlists(
+        &self,
+        change: impl FnOnce(&mut Vec<SavedPlaylist>) -> AppResult<()>,
+    ) -> AppResult<Vec<SavedPlaylist>> {
+        let mut current = lock(&self.playlists);
+        let mut next = current.clone();
+        change(&mut next)?;
+        *current = next.clone();
+        Ok(next)
     }
 
     pub fn is_downloaded(&self, id: &str) -> bool {

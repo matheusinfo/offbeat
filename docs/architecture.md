@@ -23,6 +23,7 @@ O React só fala com o backend por comandos do Tauri e, durante um download, por
 | `open_output_dir` | | | cria a pasta se preciso e abre no gerenciador de arquivos |
 | `output_dir_size` | | `number` | soma dos arquivos diretamente na pasta de saída |
 | `history_count` / `clear_history` | | `number` / | tamanho do histórico de downloads; apagá-lo |
+| `list_playlists` / `save_playlist` / `remove_playlist` | `{ playlist: {url, title} }` / `{ url }` | `SavedPlaylist[]` | playlists salvas; gravar e remover devolvem a lista atualizada |
 | `tool_versions` | | `ToolVersions` | versões de yt-dlp, ffmpeg e Deno (ou `null`) |
 
 Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `api.ts` e o front os traduz em [src/lib/errors.ts](../src/lib/errors.ts).
@@ -45,6 +46,10 @@ Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `
 - **baixar de novo** com `force: true` (botão "Baixar de novo" e o ↻ de um item pulado).
 
 O id sai da URL da faixa (`watch?v=`, `youtu.be/`, `shorts/`). Um download com `success` acrescenta a linha, sob o mesmo lock que o conjunto em memória, então dois downloads terminando juntos não misturam linhas. O histórico é gravado mesmo com a opção desligada, para valer quando ela for ligada. `preview` marca `downloaded` em cada entrada; com a opção ligada, a pré-visualização oferece "Baixar N novas" e põe na fila só essas, mantendo os números das posições.
+
+### Playlists salvas
+
+[playlists.rs](../src-tauri/src/playlists.rs) guarda `[{url, title}]` em `~/.local/share/offbeat/playlists.json` (até 200, URL revalidada, título sem caracteres de controle, gravação atômica). Na leitura, entradas inválidas ou repetidas são descartadas. A mudança é feita numa cópia e só vale se o arquivo for gravado, então memória e disco não divergem. "Sincronizar" é só o front: chama `preview` de novo e põe na fila `itemsFor(…, { onlyNew: true })`, ou seja, as faixas que o histórico não tem, com os números das posições. "Sincronizar todas" faz uma por vez.
 
 ## Cancelamento e processos
 

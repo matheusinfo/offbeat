@@ -1,11 +1,12 @@
 import { Download, FolderOpen, Loader2, Settings as SettingsIcon, X } from 'lucide-react';
 import { useCallback, useEffect, useReducer, useRef, useState, type Dispatch } from 'react';
 import { LinkStatus, Preview } from './components/Preview';
+import { SavedPlaylists, type SyncState } from './components/SavedPlaylists';
 import { Queue } from './components/Queue';
 import { Settings } from './components/Settings';
 import { UrlInput } from './components/UrlInput';
 import { I18nProvider, useI18n } from './i18n';
-import { api, type Preview as PreviewData, type Settings as SettingsData } from './lib/api';
+import { api, type Preview as PreviewData, type SavedPlaylist, type Settings as SettingsData } from './lib/api';
 import { errorFromUnknown, type ItemError } from './lib/errors';
 import {
   focusedItem,
@@ -105,6 +106,16 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   const [queue, dispatch] = useReducer(queueReducer, initialQueue);
   useDownloadRunner(queue.items, dispatch);
 
+  const [saved, setSaved] = useState<SavedPlaylist[]>([]);
+  const [savedError, setSavedError] = useState(false);
+  const [sync, setSync] = useState<Record<string, SyncState>>({});
+  useEffect(() => {
+    api
+      .listPlaylists()
+      .then(setSaved)
+      .catch(() => setSavedError(true));
+  }, []);
+
   const [folderSize, setFolderSize] = useState<number | null>(null);
   const [openFailed, setOpenFailed] = useState(false);
   const idleWithResults = isIdleWithResults(queue);
@@ -169,6 +180,40 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
     const onlyNew = settings.skipDownloaded;
     dispatch({ type: 'add', items: ready.flatMap((s) => itemsFor(s.preview, newId, { split: s.split, onlyNew })) });
     clearPreviews();
+  }
+
+  function toggleSaved(preview: PreviewData) {
+    const known = saved.some((p) => p.url === preview.url);
+    setSavedError(false);
+    (known ? api.removePlaylist(preview.url) : api.savePlaylist({ url: preview.url, title: preview.title }))
+      .then(setSaved)
+      .catch(() => setSavedError(true));
+  }
+
+  function removeSaved(playlist: SavedPlaylist) {
+    setSavedError(false);
+    api
+      .removePlaylist(playlist.url)
+      .then(setSaved)
+      .catch(() => setSavedError(true));
+  }
+
+  // Sync: preview the playlist again and queue only what the history lacks.
+  async function syncPlaylist(playlist: SavedPlaylist) {
+    setSync((s) => ({ ...s, [playlist.url]: { state: 'syncing' } }));
+    try {
+      const preview = await api.preview(playlist.url);
+      const items = itemsFor(preview, newId, { onlyNew: true });
+      if (items.length > 0) dispatch({ type: 'add', items });
+      setSync((s) => ({ ...s, [playlist.url]: { state: 'done', added: items.length } }));
+    } catch (e: unknown) {
+      setSync((s) => ({ ...s, [playlist.url]: { state: 'failed', error: errorFromUnknown(e) } }));
+    }
+  }
+
+  // One at a time: each sync is a full yt-dlp preview.
+  async function syncAll() {
+    for (const playlist of saved) await syncPlaylist(playlist);
   }
 
   async function openFolder() {
@@ -236,6 +281,8 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
               onSplitChange={(split) => dispatchPreviews({ type: 'split', key: slot.key, split })}
               skipDownloaded={settings.skipDownloaded}
               onDownload={(onlyNew) => enqueue(slot.preview, slot.split, onlyNew, slot.key)}
+              saved={slot.preview.kind === 'playlist' ? saved.some((p) => p.url === slot.preview.url) : null}
+              onToggleSaved={() => toggleSaved(slot.preview)}
               focusedTitle={focusedItem(slot.preview, slot.url, () => '')?.title ?? null}
               onDownloadFocused={() => enqueueFocused(slot.preview, slot.url, slot.key)}
               onClear={() => removePreview(slot.key)}
@@ -249,6 +296,16 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
             />
           ) : null,
         )}
+        {saved.length > 0 && (
+          <SavedPlaylists
+            playlists={saved}
+            sync={sync}
+            onSync={(p) => void syncPlaylist(p)}
+            onSyncAll={() => void syncAll()}
+            onRemove={removeSaved}
+          />
+        )}
+        {savedError && <p className="field-error">{t('saved.failed')}</p>}
         <Queue
           queue={queue}
           onCancel={(id) => dispatch({ type: 'cancel', id })}

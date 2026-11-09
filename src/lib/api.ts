@@ -108,6 +108,12 @@ export interface AppError {
   detail: string[];
 }
 
+/** A playlist kept for one-click sync (~/.local/share/offbeat/playlists.json). */
+export interface SavedPlaylist {
+  url: string;
+  title: string;
+}
+
 export interface ToolVersions {
   ytDlp: string | null;
   ffmpeg: string | null;
@@ -148,4 +154,11 @@ export const api = {
   historyCount: () => invoke<number>('history_count'),
 
   clearHistory: () => invoke<void>('clear_history'),
+
+  listPlaylists: () => invoke<SavedPlaylist[]>('list_playlists'),
+
+  /** Adds (or renames, same URL) and returns the updated list. */
+  savePlaylist: (playlist: SavedPlaylist) => invoke<SavedPlaylist[]>('save_playlist', { playlist }),
+
+  removePlaylist: (url: string) => invoke<SavedPlaylist[]>('remove_playlist', { url }),
 };

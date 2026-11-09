@@ -1,4 +1,4 @@
-import { Check, Download, ListMusic, Loader2, Music, X } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Check, Download, ListMusic, Loader2, Music, X } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type { Preview as PreviewData, Profile } from '../lib/api';
 import type { ItemError } from '../lib/errors';
@@ -17,6 +17,9 @@ interface Props {
   skipDownloaded: boolean;
   /** onlyNew leaves out songs already in the history. */
   onDownload: (onlyNew: boolean) => void;
+  /** Playlists only: whether it is in the saved list (null for a video). */
+  saved: boolean | null;
+  onToggleSaved: () => void;
   /** Title of the track a list link was opened on (watch?v=…&list=…), if any. */
   focusedTitle: string | null;
   onDownloadFocused: () => void;
@@ -35,6 +38,8 @@ export function Preview({
   onSplitChange,
   skipDownloaded,
   onDownload,
+  saved,
+  onToggleSaved,
   focusedTitle,
   onDownloadFocused,
   onClear,
@@ -146,6 +151,18 @@ export function Preview({
       )}
 
       <div className="preview__actions">
+        {saved !== null && (
+          <button
+            type="button"
+            className="btn btn--ghost preview__save"
+            onClick={onToggleSaved}
+            aria-pressed={saved}
+            title={saved ? t('preview.savedHint') : t('preview.saveHint')}
+          >
+            {saved ? <BookmarkCheck size={16} aria-hidden="true" /> : <Bookmark size={16} aria-hidden="true" />}
+            <span>{saved ? t('preview.saved') : t('preview.save')}</span>
+          </button>
+        )}
         <button type="button" className="btn" onClick={onClear}>
           <X size={16} aria-hidden="true" />
           <span>{t('preview.clear')}</span>

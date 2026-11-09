@@ -117,15 +117,18 @@ pub fn load(path: &Path, defaults: Settings) -> Settings {
     }
 }
 
-/// Writes to a temp file and renames it, so a crash never leaves a
-/// half-written settings.json.
 pub fn store(path: &Path, settings: &Settings) -> AppResult<()> {
-    let ctx = "could not save settings";
+    write_json(path, settings, "could not save settings")
+}
+
+/// Writes to a temp file and renames it, so a crash never leaves a
+/// half-written file.
+pub fn write_json<T: Serialize>(path: &Path, value: &T, ctx: &str) -> AppResult<()> {
     let dir = path
         .parent()
         .ok_or_else(|| AppError::new(ErrorCode::Io, ctx))?;
     fs::create_dir_all(dir).map_err(|e| AppError::io(ctx, &e))?;
-    let json = serde_json::to_vec_pretty(settings)
+    let json = serde_json::to_vec_pretty(value)
         .map_err(|e| AppError::new(ErrorCode::Io, format!("{ctx}: {e}")))?;
     let tmp = path.with_extension("json.tmp");
     let write = || -> std::io::Result<()> {

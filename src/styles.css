@@ -518,6 +518,70 @@ input[type='checkbox'] {
   white-space: nowrap;
 }
 
+.preview__save {
+  margin-right: auto;
+}
+
+/* ---------- Saved playlists ---------- */
+
+.saved {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.saved__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.saved__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.saved-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.saved-item__icon {
+  flex: none;
+  color: var(--muted);
+}
+
+.saved-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.saved-item__title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-item__status {
+  font-size: 12px;
+}
+
+.saved-item__status:empty {
+  display: none;
+}
+
 /* ---------- Queue ---------- */
 
 .queue {

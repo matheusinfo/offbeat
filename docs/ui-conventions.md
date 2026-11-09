@@ -12,6 +12,7 @@ Uma tela só, em uma coluna (janela de 560×720, mínimo 420 de largura):
 | [Preview](../src/components/Preview.tsx) | capa, título, canal, duração, nº de faixas (lista recolhível), tamanho estimado e "Baixar". `LinkStatus`: cartão de um link ainda carregando ou com erro, quando foram colados vários |
 | [Queue](../src/components/Queue.tsx) | itens com barra, %, velocidade e tempo restante; cancelar, tentar de novo, remover, "Cancelar tudo", "Limpar concluídos" |
 | [Settings](../src/components/Settings.tsx) | `<dialog>` modal: pasta, perfil, nome do arquivo, SponsorBlock, idioma e versões das ferramentas |
+| [SavedPlaylists](../src/components/SavedPlaylists.tsx) | playlists salvas, com "Sincronizar" por linha e "Sincronizar todas"; o estado de cada sincronização (`SyncState`) fica no App |
 | [ErrorNote](../src/components/ErrorNote.tsx) | mensagem traduzida + "Detalhes" com a linha original do stderr |
 
 - O estado da fila é um reducer puro ([queue.ts](../src/lib/queue.ts)). Componentes recebem dados e callbacks por props e não chamam o backend, exceto `Settings` (salvar, versões, seletor de pasta) e `UrlInput` (área de transferência).

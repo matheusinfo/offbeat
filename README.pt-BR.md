@@ -52,6 +52,10 @@ As músicas do YouTube Music saem especialmente caprichadas: vêm com o **nome d
 
 > 💡 **Bom saber:** se você copiar uma música enquanto ela toca *dentro* de uma playlist, o link termina com `&list=…` e o Offbeat traz **a playlist inteira**. Fique tranquilo: ele sempre mostra quantas músicas encontrou antes de baixar qualquer coisa. Se quiser só aquela música, clique em **Só esta faixa**.
 
+### Playlists que crescem
+
+Tem uma playlist de corrida em que você vive pondo música? Na pré-visualização dela, clique em **Salvar playlist**. Ela aparece em **Playlists salvas**, e da próxima vez basta clicar em **Sincronizar**: o Offbeat põe na fila **só as músicas que você ainda não baixou**. **Sincronizar todas** faz isso com todas as salvas.
+
 ### Mixes e álbuns num vídeo só
 
 Alguns vídeos longos (mixes para correr, sets de DJ, "álbum completo") vêm divididos em **capítulos**. Quando o vídeo tem capítulos, a pré-visualização mostra quantos são e a opção **Dividir em faixas, uma por capítulo**. Ligada, cada capítulo vira uma música separada, com o nome do capítulo e numerada, e o nome do vídeo vira o álbum. Assim dá para pular de música no relógio em vez de arrastar um arquivo de uma hora.
