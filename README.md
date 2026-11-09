@@ -58,7 +58,7 @@ Got a running playlist you keep adding songs to? In its preview, click **Save pl
 
 ### Mixes and full albums in a single video
 
-Some long videos (running mixes, DJ sets, "full album" uploads) are split into **chapters**. When a video has chapters, the preview shows how many and the option **Split into tracks, one per chapter**. Turn it on and each chapter becomes its own song, named after the chapter and numbered, with the video's name as the album. That way you can skip songs on the watch instead of scrubbing through a one-hour file.
+Some long videos (running mixes, DJ sets, "full album" uploads) are split into **chapters**. When a video has chapters, the preview shows how many and the option **Split into tracks, one per chapter**. Turn it on and each chapter becomes its own song, named after the chapter and numbered, with the video's name as the album. That way you can skip songs on the watch instead of scrubbing through a one-hour file. Be patient, though: split like this, the video downloads much more slowly (a one-hour mix takes about 20 minutes).
 
 ---
 

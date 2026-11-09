@@ -26,6 +26,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 
 | Ideia | Por quê | Esforço |
 |---|---|---|
+| Capítulos mais rápidos: baixar o áudio do vídeo uma vez e cortar cada capítulo localmente | Hoje cada capítulo é lido quase em tempo real (mix de 1 h ≈ 20 min) | Médio |
 | Cookies do navegador (`--cookies-from-browser`) | Playlists privadas e "Músicas curtidas" do YouTube Music | Médio |
 | Perfil Econômico mono | ~2 MB por música, para quem usa um fone só | Baixo |
 | Aviso de espaço: comparar o total da pasta com o espaço livre do relógio | Evitar transferências que não cabem | Baixo |

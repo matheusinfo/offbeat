@@ -367,7 +367,8 @@ function useFinishedNotice(summary: QueueSummary): void {
     start.current = null;
     if (document.hasFocus() || result.done + result.failed === 0) return;
     const parts: string[] = [];
-    if (result.done > 0) parts.push(t('notify.done', { count: result.done }));
+    if (result.done === 1) parts.push(t('notify.doneOne'));
+    else if (result.done > 1) parts.push(t('notify.done', { count: result.done }));
     if (result.failed > 0) parts.push(t('notify.failed', { count: result.failed }));
     api.notify(t('notify.title'), parts.join(' · ')).catch(() => {
       // No notification service: the queue on screen already tells it all.

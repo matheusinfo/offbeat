@@ -442,6 +442,9 @@ pub fn download_args(plan: &DownloadPlan) -> Vec<String> {
     if let Some(section) = &plan.section {
         args.push("--download-sections".into());
         args.push(format!("*{}-{}", section.start, section.end));
+        // Without it the cut starts at the previous seek point: a chapter
+        // came out 9 s longer, with the end of the song before it.
+        args.push("--force-keyframes-at-cuts".into());
         // The video's name becomes the album (unless it has one) and the
         // chapter's name the title, in the tags and in the file name. Both
         // run before the file is named, in this order.
@@ -886,6 +889,7 @@ mod tests {
             value_after(&args, "--download-sections"),
             vec!["*169-410.5"]
         );
+        assert!(args.iter().any(|a| a == "--force-keyframes-at-cuts"));
         assert_eq!(
             value_after(&args, "--parse-metadata"),
             vec!["2:(?P<track_number>.+)", "%(album,title)s:(?P<album>.+)"]

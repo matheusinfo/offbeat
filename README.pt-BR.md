@@ -58,7 +58,7 @@ Tem uma playlist de corrida em que você vive pondo música? Na pré-visualizaç
 
 ### Mixes e álbuns num vídeo só
 
-Alguns vídeos longos (mixes para correr, sets de DJ, "álbum completo") vêm divididos em **capítulos**. Quando o vídeo tem capítulos, a pré-visualização mostra quantos são e a opção **Dividir em faixas, uma por capítulo**. Ligada, cada capítulo vira uma música separada, com o nome do capítulo e numerada, e o nome do vídeo vira o álbum. Assim dá para pular de música no relógio em vez de arrastar um arquivo de uma hora.
+Alguns vídeos longos (mixes para correr, sets de DJ, "álbum completo") vêm divididos em **capítulos**. Quando o vídeo tem capítulos, a pré-visualização mostra quantos são e a opção **Dividir em faixas, uma por capítulo**. Ligada, cada capítulo vira uma música separada, com o nome do capítulo e numerada, e o nome do vídeo vira o álbum. Assim dá para pular de música no relógio em vez de arrastar um arquivo de uma hora. Só tenha paciência: dividido assim, o vídeo baixa bem mais devagar (um mix de 1 hora leva uns 20 minutos).
 
 ---
 

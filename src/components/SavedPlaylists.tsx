@@ -48,7 +48,11 @@ export function SavedPlaylists({ playlists, sync, onSync, onSyncAll, onRemove }:
                 <p className="saved-item__status muted" aria-live="polite">
                   {s?.state === 'syncing' && t('saved.syncing')}
                   {s?.state === 'done' &&
-                    (s.added === 0 ? t('saved.nothingNew') : t('saved.added', { count: s.added }))}
+                    (s.added === 0
+                      ? t('saved.nothingNew')
+                      : s.added === 1
+                        ? t('saved.addedOne')
+                        : t('saved.added', { count: s.added }))}
                 </p>
                 {s?.state === 'failed' && <ErrorNote error={s.error} />}
               </div>

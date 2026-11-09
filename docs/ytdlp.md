@@ -53,12 +53,14 @@ A estimativa de tamanho na pré-visualização usa MB por minuto do planejamento
 Com "Dividir em faixas" ligado, cada capítulo vira um item da fila com `section: {title, start, end}` e o número do capítulo em `index`. O download é o mesmo comando, mais:
 
 ```
---download-sections "*<início>-<fim>"
+--download-sections "*<início>-<fim>" --force-keyframes-at-cuts
 --parse-metadata "%(album,title)s:(?P<album>.+)"
 --replace-in-metadata title ".+" "<título do capítulo>"
 ```
 
 - `--download-sections` baixa só o trecho (o yt-dlp usa o ffmpeg para cortar a fonte remota). Um processo por capítulo, como numa playlist: progresso, cancelamento e "tentar de novo" por faixa.
+- `--force-keyframes-at-cuts` é necessário: sem ele o corte começa no ponto de busca anterior, e um capítulo de 241 s saiu com 250 s, com o fim da música anterior. Com ele, 241,0 s, no mesmo tempo.
+- **Limite conhecido: é lento.** O ffmpeg lê a fonte numa conexão só, e o YouTube a entrega perto da velocidade de reprodução: um capítulo de 4 min leva ~2 min (dois por vez). Um mix de 1 h leva perto de 20 min, contra menos de 1 min para o vídeo inteiro. Baixar o áudio uma vez e cortar localmente está no [ROADMAP](../ROADMAP.md).
 - O nome do vídeo vira o **álbum** (se o YouTube não informar um) e o do capítulo, o **título**, nas tags e no nome do arquivo: os dois passos rodam antes de o arquivo ser nomeado, nessa ordem. Na substituição, `\` é o único caractere especial e é dobrado.
 - **SponsorBlock fica desligado** para capítulos: os tempos dele são do vídeo inteiro.
 - O backend revalida o capítulo vindo do front (tempos finitos, início ≥ 0, fim > início, título de 1 a 300 caracteres sem caracteres de controle).

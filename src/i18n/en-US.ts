@@ -69,6 +69,7 @@ export const enUS: Record<MessageKey, string> = {
   'saved.syncing': 'Looking for new songs…',
   'saved.nothingNew': 'Nothing new.',
   'saved.added': '{count} new in the queue.',
+  'saved.addedOne': '1 new in the queue.',
   'saved.failed': 'Could not update the saved playlists.',
 
   'queue.title': 'Downloads',
@@ -99,6 +100,7 @@ export const enUS: Record<MessageKey, string> = {
 
   'notify.title': 'Offbeat: downloads finished',
   'notify.done': '{count} songs ready',
+  'notify.doneOne': '1 song ready',
   'notify.failed': '{count} failed',
 
   'footer.folder': 'Folder: {size}',

@@ -70,6 +70,7 @@ export const ptBR = {
   'saved.syncing': 'Procurando músicas novas…',
   'saved.nothingNew': 'Nada novo.',
   'saved.added': '{count} novas na fila.',
+  'saved.addedOne': '1 nova na fila.',
   'saved.failed': 'Não foi possível atualizar as playlists salvas.',
 
   'queue.title': 'Downloads',
@@ -100,6 +101,7 @@ export const ptBR = {
 
   'notify.title': 'Offbeat: downloads concluídos',
   'notify.done': '{count} músicas prontas',
+  'notify.doneOne': '1 música pronta',
   'notify.failed': '{count} com erro',
 
   'footer.folder': 'Pasta: {size}',
