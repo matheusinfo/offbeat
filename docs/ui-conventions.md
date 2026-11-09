@@ -47,10 +47,10 @@ Os READMEs são um passo a passo ilustrado. As capturas ficam em `docs/images/`,
 | Arquivo | Passo |
 | --- | --- |
 | `paste-{en,pt}.png` | link do YouTube Music colado, pasta vazia (0 B) |
-| `preview-{en,pt}.png` | pré-visualização do álbum |
+| `preview-{en,pt}.png` | pré-visualização do álbum, com "Salvar playlist" (nenhuma playlist salva nem histórico) |
 | `downloading-{en,pt}.png` | fila no meio: concluídas, convertendo, iniciando, na fila e total da pasta subindo (também é a imagem do topo) |
 | `done-{en,pt}.png` | tudo concluído, com "Abrir pasta" |
-| `settings-{en,pt}.png` | Configurações |
+| `settings-{en,pt}.png` | Configurações, no topo (pasta, perfis, nome, SponsorBlock, volume igual) |
 
 Regras, porque o repositório é público:
 
@@ -60,9 +60,9 @@ Regras, porque o repositório é público:
 
 Como refazer:
 
-1. Rode uma instância isolada, que não toca nas configurações nem na pasta de música reais (pode rodar junto com o app instalado): `npm run dev` e, em outro terminal, `XDG_CONFIG_HOME=/tmp/ob-config XDG_CACHE_HOME=/tmp/ob-cache WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9223 ./src-tauri/target/debug/offbeat`, com `/tmp/ob-config/offbeat/settings.json` apontando `outputDir` para `/tmp/Offbeat` e `language` para o idioma da rodada.
-2. Siga o fluxo (colar → Visualizar → Baixar 11 faixas → esperar → Configurações) e capture cada passo. A captura do meio vale quando há ≥ 3 concluídas e ainda há downloads. Antes da rodada do outro idioma, apague os `.mp3` de `/tmp/Offbeat`, senão o yt-dlp pula as faixas e não há progresso para fotografar.
-3. Capture só a janela com `ffmpeg -f x11grab` (o `xwd` sai em branco com o WebKit; veja [recipes.md](recipes.md#testar-a-interface-de-verdade)) e reduza para 128 cores, o que deixa cada PNG com 10–28 KB:
+1. Rode uma instância isolada, que não toca nas configurações nem na pasta de música reais (pode rodar junto com o app instalado): `npm run dev` e, em outro terminal, `XDG_CONFIG_HOME=/tmp/ob-config XDG_CACHE_HOME=/tmp/ob-cache XDG_DATA_HOME=/tmp/ob-data WEBKIT_INSPECTOR_HTTP_SERVER=127.0.0.1:9223 ./src-tauri/target/debug/offbeat`, com `/tmp/ob-config/offbeat/settings.json` apontando `outputDir` para `/tmp/Offbeat` e `language` para o idioma da rodada. O `XDG_DATA_HOME` isola o histórico e as playlists salvas.
+2. Siga o fluxo (colar → Visualizar → Baixar 11 faixas → esperar → Configurações) e capture cada passo. A captura do meio vale quando há ≥ 3 concluídas e ainda há downloads. Antes da rodada do outro idioma, apague os `.mp3` de `/tmp/Offbeat` e o `history.txt` e o `playlists.json` de `/tmp/ob-data/offbeat/`, senão o app pula as faixas ("Baixar N novas") e a playlist aparece como salva.
+3. Capture a página pelo inspetor com `Page.snapshotRect` (veja [recipes.md](recipes.md#testar-a-interface-de-verdade)): pega só o conteúdo da janela, mesmo que ela esteja atrás de outras. O `ffmpeg -f x11grab` também serve, mas captura a tela, então a janela precisa estar na frente. Depois reduza para 128 cores, o que deixa cada PNG com 10–28 KB:
 
 ```bash
 ffmpeg -i captura.png -vf "split[a][b];[a]palettegen=max_colors=128[p];[b][p]paletteuse=dither=none" docs/images/downloading-pt.png

@@ -21,6 +21,7 @@ Offbeat é um app desktop para Linux (Tauri 2 + React 19 + TypeScript, backend e
 ## Estado atual
 
 - **Versão 0.1.0** (MVP do planejamento + YouTube Music), instalada como AppImage na máquina do usuário. Testada no app com vídeo, álbum do YouTube Music, cancelamento, erros e troca de idioma.
+- Depois do MVP (ainda na 0.1.0, não publicada): vários links de uma vez, "Só esta faixa", volume igual, capítulos em faixas, histórico (pular já baixadas), playlists salvas com sincronização, atualizar o yt-dlp pelo app e notificação de fila concluída. Testados numa instância isolada com o álbum CC de Kevin MacLeod e um vídeo CC com 20 capítulos. A atualização de fato do yt-dlp só foi vista pela linha de comando (no app, a versão já era a mais recente).
 - **Pendência principal:** o teste no relógio (o GT 5 toca M4A?). Ele decide o perfil padrão; o que fazer com o resultado está em [docs/recipes.md](docs/recipes.md#depois-do-teste-no-relógio-m4a-no-gt-5).
 - Próximas ideias, em ordem, no [ROADMAP.md](ROADMAP.md).
 
@@ -42,18 +43,23 @@ cd src-tauri && cargo test && cargo clippy --all-targets -- -D warnings && cargo
 ```
 src/lib/api.ts              contrato com o backend: tipos e comandos (espelhados em Rust)
 src/App.tsx                 tela única, carga das configurações, executor da fila (2 downloads por vez)
-src/components/             UrlInput, Preview, Queue, Settings (modal), ErrorNote
+src/components/             UrlInput, Preview (+ LinkStatus), SavedPlaylists, Queue, Settings (modal), ErrorNote
 src/lib/                    lógica pura e testada: ytdlp (URL, estimativa), progress (linhas PROG/POST/DONE),
                             queue (reducer da fila), previews (links colados → itens da fila),
                             errors (classifica o stderr), format (Intl)
 src/i18n/                   pt-BR.ts (fonte das chaves), en-US.ts, translate.ts, index.tsx (provider)
 src/styles.css              tokens de cor claro/escuro (segue o sistema)
 src-tauri/src/lib.rs        builder do Tauri, plugins, estado, limpeza da pasta temporária
-src-tauri/src/downloads.rs  comandos preview, download, cancel_download, open_output_dir, output_dir_size
+src-tauri/src/downloads.rs  comandos preview, download, cancel_download, open_output_dir, output_dir_size,
+                            history_count, clear_history
+src-tauri/src/history.rs    histórico de downloads (~/.local/share/offbeat/history.txt) e id do vídeo pela URL
+src-tauri/src/playlists.rs  playlists salvas (playlists.json) e seus comandos
+src-tauri/src/updater.rs    atualizar o yt-dlp pelo app (cópia em ~/.local/share/offbeat/bin, yt-dlp -U)
+src-tauri/src/notify.rs     notificação do sistema pelo D-Bus quando a fila termina
 src-tauri/src/ytdlp.rs      funções puras: validação de URL, argumentos do yt-dlp, leitura do JSON de preview
 src-tauri/src/process.rs    processos em grupo próprio, leitura de linhas, timeout e kill
 src-tauri/src/settings.rs   ~/.config/offbeat/settings.json (validação e gravação atômica)
-src-tauri/src/sidecar.rs    caminhos dos sidecars e tool_versions
+src-tauri/src/sidecar.rs    caminhos dos sidecars e tool_versions (do yt-dlp em uso)
 src-tauri/tauri.conf.json   janela, CSP, bundle e externalBin
 src-tauri/capabilities/     permissões do WebView (mínimas)
 scripts/fetch-binaries.sh   baixa e confere (SHA-256) os sidecars e salva as licenças deles
