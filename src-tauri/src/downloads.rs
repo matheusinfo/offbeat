@@ -154,6 +154,7 @@ pub async fn download(
         profile: settings.profile,
         pattern: settings.filename_pattern,
         sponsorblock: settings.sponsorblock,
+        normalize_volume: settings.normalize_volume,
         output_dir: utf8(&settings.output_dir)?,
         temp_dir: utf8(&temp_dir)?,
         ffmpeg: utf8(&ffmpeg)?,

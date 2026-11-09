@@ -13,6 +13,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - AppImage instalável para o usuário, com atalho no menu (`npm run install-desktop`)
 - Vários links de uma vez, com uma pré-visualização para cada e "Baixar tudo"
 - "Só esta faixa" para links de música tocada dentro de uma lista (`watch?v=…&list=…`)
+- Volume igual em todas as músicas (`loudnorm` na mesma codificação do MP3)
 
 ## Pendente
 
@@ -24,7 +25,6 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 | Playlists salvas: um clique para buscar só as faixas novas | Sincronizar uma playlist que cresce | Médio |
 | Cookies do navegador (`--cookies-from-browser`) | Playlists privadas e "Músicas curtidas" do YouTube Music | Médio |
 | Atualizar o yt-dlp pelo app (`~/.local/share/offbeat/bin/`, conferindo `SHA2-256SUMS`) | O YouTube quebra versões antigas em semanas | Médio |
-| Normalização de volume (`loudnorm`) na mesma codificação | Volume uniforme para treinar com fone | Baixo |
 | Perfil Econômico mono | ~2 MB por música, para quem usa um fone só | Baixo |
 | Aviso de espaço: comparar o total da pasta com o espaço livre do relógio | Evitar transferências que não cabem | Baixo |
 | Release: AppImage publicado, ícone final, sidecars sem conflito no .deb | Distribuir sem compilar | Médio |

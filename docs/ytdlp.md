@@ -28,7 +28,8 @@ yt-dlp --ignore-config --no-color --no-playlist --newline --progress --no-simula
   --ffmpeg-location <sidecar ffmpeg> [--js-runtimes deno:<sidecar deno>]
   -P <pasta de saída> -P temp:~/.cache/offbeat/tmp/<id>
   -o <modelo de nome> [--parse-metadata "<n>:(?P<track_number>.+)"]
-  <argumentos do perfil> [--sponsorblock-remove music_offtopic]
+  <argumentos do perfil> [--ppa "ExtractAudio+ffmpeg_o:-af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100"]
+  [--sponsorblock-remove music_offtopic]
   -- <URL>
 ```
 
@@ -45,6 +46,13 @@ yt-dlp --ignore-config --no-color --no-playlist --newline --progress --no-simula
 | `economy` | `-f bestaudio -x --audio-format mp3 --audio-quality 7` | LAME VBR V7, ~100 kbps |
 
 A estimativa de tamanho na pré-visualização usa MB por minuto do planejamento (0,96 / 1,0 / 0,75) em [src/lib/ytdlp.ts](../src/lib/ytdlp.ts). Num álbum de teste de 42:58 no perfil Equilibrado, a estimativa foi 43,0 MB e o resultado real, 41 MB.
+
+### Volume igual (`normalizeVolume`)
+
+- `loudnorm` de uma passada, com alvo de **-14 LUFS** (o nível do YouTube e do Spotify), pico máximo de -1,5 dBTP. Entra como argumento de saída do `ExtractAudio`, então roda **na mesma codificação** do MP3: sem segunda conversão nem arquivo maior.
+- `-ar 44100` é obrigatório: o `loudnorm` entrega 192 kHz, que o LAME não aceita.
+- Ignorado no perfil Original, que copia o AAC sem recodificar (um filtro forçaria a recodificação).
+- Medido com o yt-dlp 2026.10.26 numa faixa de 1:45: -14,4 LUFS integrados no resultado.
 
 ### Nome do arquivo
 

@@ -18,6 +18,9 @@ const THUMBNAIL_PREFIX: &str = "https://i.ytimg.com/";
 // Quoted so ffmpeg's filtergraph parser keeps the commas inside min().
 const COVER_PPA: &str =
     "ThumbnailsConvertor+ffmpeg_o:-vf \"crop='min(iw,ih)':'min(iw,ih)',scale=300:300\" -q:v 5";
+// One-pass EBU R128 to -14 LUFS, the level streaming services use. loudnorm
+// outputs 192 kHz, which LAME rejects, hence the explicit sample rate.
+const LOUDNORM_PPA: &str = "ExtractAudio+ffmpeg_o:-af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100";
 
 fn invalid_url(msg: &str) -> AppError {
     AppError::new(ErrorCode::InvalidUrl, msg)
@@ -259,6 +262,7 @@ pub struct DownloadPlan {
     pub profile: Profile,
     pub pattern: FilenamePattern,
     pub sponsorblock: bool,
+    pub normalize_volume: bool,
     pub output_dir: String,
     pub temp_dir: String,
     pub ffmpeg: String,
@@ -353,6 +357,11 @@ pub fn download_args(plan: &DownloadPlan) -> Vec<String> {
         args.push(format!("{n}:(?P<track_number>.+)"));
     }
     args.extend(profile_args(plan.profile).iter().map(|s| s.to_string()));
+    // Original copies the AAC stream; a filter would force a re-encode.
+    if plan.normalize_volume && plan.profile != Profile::Original {
+        args.push("--ppa".into());
+        args.push(LOUDNORM_PPA.into());
+    }
     if plan.sponsorblock {
         args.push("--sponsorblock-remove".into());
         args.push("music_offtopic".into());
@@ -565,6 +574,7 @@ mod tests {
             profile: Profile::Balanced,
             pattern: FilenamePattern::Title,
             sponsorblock: false,
+            normalize_volume: false,
             output_dir: "/home/u/Music/Offbeat".into(),
             temp_dir: "/home/u/.cache/offbeat/tmp/job1".into(),
             ffmpeg: "/app/ffmpeg".into(),
@@ -685,6 +695,26 @@ mod tests {
             ..plan()
         });
         assert!(!original.iter().any(|a| a == "--audio-quality"));
+    }
+
+    #[test]
+    fn download_args_normalize_volume() {
+        let args = download_args(&DownloadPlan {
+            normalize_volume: true,
+            ..plan()
+        });
+        let ppa = value_after(&args, "--ppa");
+        assert_eq!(ppa.len(), 2);
+        assert_eq!(
+            ppa[1],
+            "ExtractAudio+ffmpeg_o:-af loudnorm=I=-14:TP=-1.5:LRA=11 -ar 44100"
+        );
+        let original = download_args(&DownloadPlan {
+            normalize_volume: true,
+            profile: Profile::Original,
+            ..plan()
+        });
+        assert_eq!(value_after(&original, "--ppa").len(), 1);
     }
 
     #[test]

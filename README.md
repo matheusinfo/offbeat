@@ -107,6 +107,7 @@ Click the **gear** at the top right.
 
 - **File name:** just the song title, or *Artist - Title*. Songs from albums and playlists also get their number in front (`01 - `).
 - **Cut non-music parts (SponsorBlock):** removes talking and intros from music videos. To do this, Offbeat asks a free community service (`sponsor.ajay.app`) where those parts are. Off by default.
+- **Same volume for every song:** evens out the loudness, so no song is too quiet or blasting in your earbuds. Great for working out. Off by default; not available with the Original profile, which keeps the audio untouched.
 - **Language:** Português (Brasil) or English (US). *System* follows your computer.
 
 ---

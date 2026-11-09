@@ -19,6 +19,8 @@ export interface Settings {
   filenamePattern: FilenamePattern;
   /** Cut non-music parts with SponsorBlock (contacts sponsor.ajay.app). */
   sponsorblock: boolean;
+  /** Same loudness for every track; ignored by the Original profile (no re-encode). */
+  normalizeVolume: boolean;
   /** null follows the system language. */
   language: Lang | null;
 }

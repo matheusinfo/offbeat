@@ -40,6 +40,8 @@ pub struct Settings {
     pub profile: Profile,
     pub filename_pattern: FilenamePattern,
     pub sponsorblock: bool,
+    /// Same loudness for every track (loudnorm); ignored by the Original profile.
+    pub normalize_volume: bool,
     pub language: Option<Lang>,
 }
 
@@ -52,6 +54,7 @@ impl Settings {
             profile: Profile::Balanced,
             filename_pattern: FilenamePattern::Title,
             sponsorblock: false,
+            normalize_volume: false,
             language: None,
         }
     }
@@ -105,6 +108,7 @@ pub fn load(path: &Path, defaults: Settings) -> Settings {
         profile: field(&map, "profile").unwrap_or(defaults.profile),
         filename_pattern: field(&map, "filenamePattern").unwrap_or(defaults.filename_pattern),
         sponsorblock: field(&map, "sponsorblock").unwrap_or(defaults.sponsorblock),
+        normalize_volume: field(&map, "normalizeVolume").unwrap_or(defaults.normalize_volume),
         language: field::<Option<Lang>>(&map, "language").unwrap_or(defaults.language),
     }
 }
@@ -176,6 +180,7 @@ mod tests {
                 "profile": "balanced",
                 "filenamePattern": "artist-title",
                 "sponsorblock": false,
+                "normalizeVolume": false,
                 "language": "pt-BR"
             })
         );
@@ -223,6 +228,7 @@ mod tests {
             profile: Profile::Original,
             filename_pattern: FilenamePattern::ArtistTitle,
             sponsorblock: true,
+            normalize_volume: true,
             language: Some(Lang::EnUs),
         };
         store(&file, &s).expect("store");

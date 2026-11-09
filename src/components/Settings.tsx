@@ -178,6 +178,23 @@ export function Settings({ settings, onClose, onSaved }: Props) {
             </label>
           </div>
 
+          <div className="field">
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={draft.normalizeVolume && draft.profile !== 'original'}
+                disabled={draft.profile === 'original'}
+                onChange={(e) => patch({ normalizeVolume: e.target.checked })}
+              />
+              <span>
+                <span className="checkbox__label">{t('settings.normalize')}</span>
+                <span className="hint">
+                  {draft.profile === 'original' ? t('settings.normalizeOriginal') : t('settings.normalizeHint')}
+                </span>
+              </span>
+            </label>
+          </div>
+
           <fieldset className="field">
             <legend className="field-label">{t('settings.language')}</legend>
             <div className="radio-row">

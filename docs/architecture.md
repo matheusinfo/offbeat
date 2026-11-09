@@ -53,6 +53,7 @@ Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `
 | `profile` | `original`, `balanced`, `economy` | `balanced` (M4A no GT 5 ainda não foi testado) |
 | `filenamePattern` | `title`, `artist-title` | `title` |
 | `sponsorblock` | booleano | `false` |
+| `normalizeVolume` | booleano (ignorado no perfil `original`) | `false` |
 | `language` | `pt-BR`, `en-US`, `null` (sistema) | `null` |
 
 - Leitura campo a campo: um valor inválido volta ao padrão sem zerar o resto.
