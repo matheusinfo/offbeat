@@ -112,6 +112,7 @@ Clique na **engrenagem** no canto de cima, à direita.
 - **Nome do arquivo:** só o título da música, ou *Artista - Título*. Músicas de álbuns e playlists também ganham o número na frente (`01 - `).
 - **Cortar trechos sem música (SponsorBlock):** tira conversas e introduções dos clipes. Para isso, o Offbeat pergunta a um serviço gratuito da comunidade (`sponsor.ajay.app`) onde ficam esses trechos. Vem desligado.
 - **Volume igual em todas as músicas:** deixa todas com o mesmo volume, sem uma baixinha e outra estourando no fone. Ótimo para treinar. Vem desligado; não vale para o perfil Original, que guarda o áudio intacto.
+- **Pular músicas já baixadas:** o Offbeat lembra o que já baixou. Ao abrir de novo uma playlist que cresceu, ele mostra quantas já vieram antes e o botão **Baixar N novas** traz só as novas. Mesmo que você já tenha apagado os arquivos depois de mandar para o relógio. Vem ligado. Quer uma de novo? **Baixar de novo** na pré-visualização, ou o **↻** na fila. **Apagar histórico** faz o Offbeat esquecer tudo.
 - **Idioma:** Português (Brasil) ou English (US). *Sistema* segue o seu computador.
 
 ---

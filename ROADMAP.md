@@ -15,6 +15,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - "Só esta faixa" para links de música tocada dentro de uma lista (`watch?v=…&list=…`)
 - Volume igual em todas as músicas (`loudnorm` na mesma codificação do MP3)
 - Vídeos com capítulos divididos em uma faixa por capítulo (`--download-sections`)
+- Histórico de downloads: pular o que já foi baixado, "Baixar N novas" e "Baixar de novo"
 
 ## Pendente
 
@@ -22,7 +23,6 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 
 | Ideia | Por quê | Esforço |
 |---|---|---|
-| Arquivo de histórico (`--download-archive`) | Não baixar de novo o que já existe; base da sincronização | Baixo |
 | Playlists salvas: um clique para buscar só as faixas novas | Sincronizar uma playlist que cresce | Médio |
 | Cookies do navegador (`--cookies-from-browser`) | Playlists privadas e "Músicas curtidas" do YouTube Music | Médio |
 | Atualizar o yt-dlp pelo app (`~/.local/share/offbeat/bin/`, conferindo `SHA2-256SUMS`) | O YouTube quebra versões antigas em semanas | Médio |

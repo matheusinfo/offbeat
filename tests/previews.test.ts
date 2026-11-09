@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { Preview } from '../src/lib/api';
 import type { ItemError } from '../src/lib/errors';
 import {
+  downloadedCount,
   focusedItem,
   initialPreviews,
   isLoading,
@@ -24,7 +25,9 @@ const video = (id: string): Preview => ({
   uploader: null,
   duration: 60,
   thumbnail: null,
-  entries: [{ id, url: `https://www.youtube.com/watch?v=${id}`, title: `Song ${id}`, uploader: null, duration: 60 }],
+  entries: [
+    { id, url: `https://www.youtube.com/watch?v=${id}`, title: `Song ${id}`, uploader: null, duration: 60, downloaded: false },
+  ],
   chapters: [],
 });
 
@@ -38,6 +41,7 @@ const playlist = (id: string, n: number): Preview => ({
     title: `Track ${i + 1}`,
     uploader: null,
     duration: 60,
+    downloaded: false,
   })),
 });
 
@@ -108,6 +112,7 @@ describe('focusedItem', () => {
       url: 'https://www.youtube.com/watch?v=p1',
       title: 'Track 2',
       index: null,
+      force: false,
     });
   });
 
@@ -130,13 +135,13 @@ describe('chapters', () => {
   const id = () => 'x';
 
   it('splits a video into one numbered item per chapter when asked', () => {
-    expect(itemsFor(mix, id, true)).toEqual([
+    expect(itemsFor(mix, id, { split: true })).toEqual([
       { id: 'x', url: mix.url, title: 'Intro', index: 1, section: { title: 'Intro', start: 0, end: 60 } },
       { id: 'x', url: mix.url, title: 'Song B', index: 2, section: { title: 'Song B', start: 60, end: 200 } },
     ]);
-    expect(trackCount(mix, true)).toBe(2);
-    expect(itemsFor(mix, id, false)).toHaveLength(1);
-    expect(trackCount(mix, false)).toBe(1);
+    expect(trackCount(mix, { split: true })).toBe(2);
+    expect(itemsFor(mix, id, { split: false })).toHaveLength(1);
+    expect(trackCount(mix, { split: false })).toBe(1);
   });
 
   it('only lets videos with chapters be split', () => {
@@ -148,6 +153,30 @@ describe('chapters', () => {
       { type: 'split', key: 'v', split: true },
     ]);
     expect(readySlots(s).map((x) => x.split)).toEqual([true, false]);
-    expect(itemsFor(video('v'), id, true)).toHaveLength(1);
+    expect(itemsFor(video('v'), id, { split: true })).toHaveLength(1);
+  });
+});
+
+describe('history', () => {
+  const id = () => 'x';
+  const list = playlist('p', 3);
+  const synced: Preview = {
+    ...list,
+    entries: list.entries.map((e, i) => ({ ...e, downloaded: i !== 1 })),
+  };
+
+  it('leaves out downloaded songs only when asked, keeping their positions', () => {
+    expect(itemsFor(synced, id, { onlyNew: true }).map((i) => [i.index, i.title, i.force])).toEqual([
+      [2, 'Track 2', false],
+    ]);
+    expect(itemsFor(synced, id).map((i) => i.force)).toEqual([true, false, true]);
+    expect(downloadedCount(synced)).toBe(2);
+    expect(trackCount(synced, { onlyNew: true })).toBe(1);
+  });
+
+  it('forces a downloaded single video unless only new songs are wanted', () => {
+    const v: Preview = { ...video('v'), entries: video('v').entries.map((e) => ({ ...e, downloaded: true })) };
+    expect(itemsFor(v, id)).toEqual([expect.objectContaining({ force: true, index: null })]);
+    expect(itemsFor(v, id, { onlyNew: true })).toEqual([]);
   });
 });

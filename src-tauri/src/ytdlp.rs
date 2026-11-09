@@ -101,6 +101,8 @@ pub struct PreviewEntry {
     pub title: String,
     pub uploader: Option<String>,
     pub duration: Option<f64>,
+    /// Already in the download history; set by the preview command.
+    pub downloaded: bool,
 }
 
 /// A chapter of a video; also the part of it a download may be limited to.
@@ -257,6 +259,7 @@ fn parse_entry(v: &Value) -> Option<PreviewEntry> {
         title: str_field(v, "title").unwrap_or(id).to_owned(),
         uploader: uploader(v),
         duration: duration(v),
+        downloaded: false,
     })
 }
 
@@ -311,6 +314,7 @@ pub fn parse_preview(json: &str) -> AppResult<Preview> {
         title: title.clone(),
         uploader: uploader(&root),
         duration: duration(&root),
+        downloaded: false,
     };
     Ok(Preview {
         kind: PreviewKind::Video,

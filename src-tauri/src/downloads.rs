@@ -1,4 +1,5 @@
 use crate::error::{AppError, AppResult, ErrorCode};
+use crate::history;
 use crate::process::{self, Tail};
 use crate::sidecar::{self, Tool};
 use crate::state::{AppState, Job};
@@ -26,6 +27,9 @@ pub struct DownloadRequest {
     pub index: Option<u32>,
     /// Download only this chapter of the video, as its own track.
     pub section: Option<Chapter>,
+    /// Download even if the video is in the history ("download again").
+    #[serde(default)]
+    pub force: bool,
 }
 
 #[derive(Debug, Clone, Copy, Serialize)]
@@ -48,6 +52,8 @@ pub enum DownloadStatus {
     Success,
     Failed,
     Canceled,
+    /// Already in the history; nothing was run.
+    Skipped,
 }
 
 /// Mirrors `DownloadOutcome` in src/lib/api.ts.
@@ -73,7 +79,7 @@ fn deno_path() -> AppResult<Option<String>> {
 }
 
 #[tauri::command]
-pub async fn preview(url: String) -> AppResult<Preview> {
+pub async fn preview(state: State<'_, AppState>, url: String) -> AppResult<Preview> {
     let url = ytdlp::validate_url(&url)?;
     let ytdlp_bin = sidecar::path(Tool::YtDlp)?;
     let args = ytdlp::preview_args(&url, deno_path()?.as_deref());
@@ -89,7 +95,11 @@ pub async fn preview(url: String) -> AppResult<Preview> {
         );
     }
     let json = String::from_utf8_lossy(&out.stdout);
-    ytdlp::parse_preview(&json)
+    let mut preview = ytdlp::parse_preview(&json)?;
+    for entry in &mut preview.entries {
+        entry.downloaded = state.is_downloaded(&entry.id);
+    }
+    Ok(preview)
 }
 
 /// Removes the job from the registry and its temp folder on every exit path.
@@ -126,6 +136,18 @@ pub async fn download(
     }
     let url = ytdlp::validate_url(&request.url)?;
     let settings = state.settings();
+    // A chapter is only part of a video: it neither counts as the video
+    // being downloaded nor is skipped because of it.
+    let history_id = history::video_id(&url).filter(|_| request.section.is_none());
+    if let Some(id) = &history_id {
+        if settings.skip_downloaded && !request.force && state.is_downloaded(id) {
+            return Ok(DownloadOutcome {
+                status: DownloadStatus::Skipped,
+                exit_code: None,
+                stderr: Vec::new(),
+            });
+        }
+    }
     let ytdlp_bin = sidecar::path(Tool::YtDlp)?;
     let ffmpeg = sidecar::path(Tool::Ffmpeg)?;
     // yt-dlp finds ffprobe next to ffmpeg and needs it to extract audio.
@@ -166,7 +188,17 @@ pub async fn download(
         ffmpeg: utf8(&ffmpeg)?,
         deno,
     };
-    run_download(&ytdlp_bin, &ytdlp::download_args(&plan), &job, on_event).await
+    let outcome = run_download(&ytdlp_bin, &ytdlp::download_args(&plan), &job, on_event).await?;
+    if outcome.status == DownloadStatus::Success {
+        if let Some(id) = &history_id {
+            // The file is saved; failing to note it only means a later
+            // sync may fetch it again.
+            if let Err(e) = state.record_download(id) {
+                eprintln!("offbeat: {}", e.message);
+            }
+        }
+    }
+    Ok(outcome)
 }
 
 async fn run_download(
@@ -310,6 +342,16 @@ pub async fn output_dir_size(state: State<'_, AppState>) -> AppResult<u64> {
         })?
 }
 
+#[tauri::command]
+pub async fn history_count(state: State<'_, AppState>) -> AppResult<usize> {
+    Ok(state.history_count())
+}
+
+#[tauri::command]
+pub async fn clear_history(state: State<'_, AppState>) -> AppResult<()> {
+    state.clear_history()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -333,6 +375,15 @@ mod tests {
             serde_json::to_value(&outcome).expect("serialize"),
             serde_json::json!({"status": "canceled", "exitCode": null, "stderr": ["x"]})
         );
+        assert_eq!(
+            serde_json::to_value(DownloadStatus::Skipped).expect("serialize"),
+            "skipped"
+        );
+        let request: DownloadRequest = serde_json::from_value(serde_json::json!({
+            "id": "a", "url": "https://youtu.be/x", "index": null, "section": null
+        }))
+        .expect("deserialize");
+        assert!(!request.force, "force defaults to false");
     }
 
     #[test]

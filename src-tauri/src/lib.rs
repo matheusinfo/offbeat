@@ -1,5 +1,6 @@
 mod downloads;
 mod error;
+mod history;
 mod process;
 mod settings;
 mod sidecar;
@@ -30,6 +31,7 @@ fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     let paths = Paths {
         settings_file: app_dir(app.path().config_dir())?.join("settings.json"),
         temp_root: app_dir(app.path().cache_dir())?.join("tmp"),
+        history_file: app_dir(app.path().data_dir())?.join("history.txt"),
     };
     // Leftovers from a crash or a kill; nothing can be running yet.
     if let Err(e) = std::fs::remove_dir_all(&paths.temp_root) {
@@ -58,6 +60,8 @@ pub fn run() {
             downloads::cancel_download,
             downloads::open_output_dir,
             downloads::output_dir_size,
+            downloads::history_count,
+            downloads::clear_history,
             settings::get_settings,
             settings::save_settings,
             sidecar::tool_versions,

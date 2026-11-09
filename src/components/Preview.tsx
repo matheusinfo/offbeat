@@ -1,10 +1,10 @@
-import { Download, ListMusic, Loader2, Music, X } from 'lucide-react';
+import { Check, Download, ListMusic, Loader2, Music, X } from 'lucide-react';
 import { useI18n } from '../i18n';
 import type { Preview as PreviewData, Profile } from '../lib/api';
 import type { ItemError } from '../lib/errors';
 import { ErrorNote } from './ErrorNote';
 import { formatBytes, formatDuration, formatIndex } from '../lib/format';
-import { canSplit } from '../lib/previews';
+import { canSplit, downloadedCount, trackCount } from '../lib/previews';
 import { estimateEntries } from '../lib/ytdlp';
 
 interface Props {
@@ -13,7 +13,10 @@ interface Props {
   /** Download a video with chapters as one track per chapter. */
   split: boolean;
   onSplitChange: (split: boolean) => void;
-  onDownload: () => void;
+  /** The skipDownloaded setting: offer only the new songs first. */
+  skipDownloaded: boolean;
+  /** onlyNew leaves out songs already in the history. */
+  onDownload: (onlyNew: boolean) => void;
   /** Title of the track a list link was opened on (watch?v=…&list=…), if any. */
   focusedTitle: string | null;
   onDownloadFocused: () => void;
@@ -30,6 +33,7 @@ export function Preview({
   profile,
   split,
   onSplitChange,
+  skipDownloaded,
   onDownload,
   focusedTitle,
   onDownloadFocused,
@@ -40,7 +44,12 @@ export function Preview({
   const isPlaylist = preview.kind === 'playlist';
   const splittable = canSplit(preview);
   const chapterCount = preview.chapters.length;
-  const count = isPlaylist ? preview.entries.length : split && splittable ? chapterCount : 1;
+  const splitting = split && splittable;
+  const count = trackCount(preview, { split });
+  // Chapters ignore the history: they are parts, not songs already saved.
+  const downloaded = splitting ? 0 : downloadedCount(preview);
+  const newCount = trackCount(preview, { split, onlyNew: true });
+  const offerNew = skipDownloaded && downloaded > 0;
   const durations =
     isPlaylist ? preview.entries.map((e) => e.duration) : [preview.duration ?? preview.entries[0]?.duration ?? null];
   const estimate = estimateEntries(durations, profile);
@@ -91,6 +100,12 @@ export function Preview({
               <li key={`${entry.id}-${i}`}>
                 <span className="preview__track-index">{formatIndex(i + 1)}</span>
                 <span className="preview__track-title">{entry.title}</span>
+                {entry.downloaded && (
+                  <span className="preview__track-done" title={t('preview.trackDownloaded')}>
+                    <Check size={14} aria-hidden="true" />
+                    <span className="visually-hidden">{t('preview.trackDownloaded')}</span>
+                  </span>
+                )}
                 {entry.duration !== null && <span className="muted">{formatDuration(entry.duration)}</span>}
               </li>
             ))}
@@ -121,6 +136,11 @@ export function Preview({
         </>
       )}
       {isPlaylist && count === 0 && <p className="muted">{t('preview.emptyPlaylist')}</p>}
+      {downloaded > 0 && (
+        <p className="preview__history muted">
+          {isPlaylist ? t('preview.someDownloaded', { count: downloaded, total: count }) : t('preview.videoDownloaded')}
+        </p>
+      )}
       {focusedTitle !== null && (
         <p className="preview__focused muted">{t('preview.focusedHint', { title: focusedTitle })}</p>
       )}
@@ -136,10 +156,34 @@ export function Preview({
             <span>{t('preview.downloadFocused')}</span>
           </button>
         )}
-        <button type="button" className="btn btn--primary" onClick={onDownload} disabled={count === 0}>
-          <Download size={16} aria-hidden="true" />
-          <span>{count > 1 ? t('preview.downloadMany', { count }) : t('preview.download')}</span>
-        </button>
+        {offerNew && newCount > 0 && (
+          <button type="button" className="btn" onClick={() => onDownload(false)}>
+            <span>{t('preview.downloadEvery', { count })}</span>
+          </button>
+        )}
+        {offerNew ? (
+          <button
+            type="button"
+            className="btn btn--primary"
+            onClick={() => onDownload(newCount > 0)}
+          >
+            <Download size={16} aria-hidden="true" />
+            <span>
+              {newCount === 0
+                ? count > 1
+                  ? t('preview.downloadAgainMany', { count })
+                  : t('preview.downloadAgain')
+                : newCount === 1
+                  ? t('preview.downloadNewOne')
+                  : t('preview.downloadNew', { count: newCount })}
+            </span>
+          </button>
+        ) : (
+          <button type="button" className="btn btn--primary" onClick={() => onDownload(false)} disabled={count === 0}>
+            <Download size={16} aria-hidden="true" />
+            <span>{count > 1 ? t('preview.downloadMany', { count }) : t('preview.download')}</span>
+          </button>
+        )}
       </div>
     </section>
   );

@@ -42,6 +42,8 @@ pub struct Settings {
     pub sponsorblock: bool,
     /// Same loudness for every track (loudnorm); ignored by the Original profile.
     pub normalize_volume: bool,
+    /// Skip videos already in the download history.
+    pub skip_downloaded: bool,
     pub language: Option<Lang>,
 }
 
@@ -55,6 +57,7 @@ impl Settings {
             filename_pattern: FilenamePattern::Title,
             sponsorblock: false,
             normalize_volume: false,
+            skip_downloaded: true,
             language: None,
         }
     }
@@ -109,6 +112,7 @@ pub fn load(path: &Path, defaults: Settings) -> Settings {
         filename_pattern: field(&map, "filenamePattern").unwrap_or(defaults.filename_pattern),
         sponsorblock: field(&map, "sponsorblock").unwrap_or(defaults.sponsorblock),
         normalize_volume: field(&map, "normalizeVolume").unwrap_or(defaults.normalize_volume),
+        skip_downloaded: field(&map, "skipDownloaded").unwrap_or(defaults.skip_downloaded),
         language: field::<Option<Lang>>(&map, "language").unwrap_or(defaults.language),
     }
 }
@@ -181,6 +185,7 @@ mod tests {
                 "filenamePattern": "artist-title",
                 "sponsorblock": false,
                 "normalizeVolume": false,
+                "skipDownloaded": true,
                 "language": "pt-BR"
             })
         );
@@ -229,6 +234,7 @@ mod tests {
             filename_pattern: FilenamePattern::ArtistTitle,
             sponsorblock: true,
             normalize_volume: true,
+            skip_downloaded: false,
             language: Some(Lang::EnUs),
         };
         store(&file, &s).expect("store");

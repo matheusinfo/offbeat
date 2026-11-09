@@ -97,6 +97,10 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   const ready = readySlots(previews);
   const single = previews.slots.length === 1 ? previews.slots[0] : undefined;
   const singleError: ItemError | null = single?.state === 'error' ? single.error : null;
+  const allCount = ready.reduce(
+    (n, s) => n + trackCount(s.preview, { split: s.split, onlyNew: settings.skipDownloaded }),
+    0,
+  );
 
   const [queue, dispatch] = useReducer(queueReducer, initialQueue);
   useDownloadRunner(queue.items, dispatch);
@@ -149,8 +153,8 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
     else dispatchPreviews({ type: 'remove', key });
   }
 
-  function enqueue(preview: PreviewData, split: boolean, key: string) {
-    dispatch({ type: 'add', items: itemsFor(preview, newId, split) });
+  function enqueue(preview: PreviewData, split: boolean, onlyNew: boolean, key: string) {
+    dispatch({ type: 'add', items: itemsFor(preview, newId, { split, onlyNew }) });
     removePreview(key);
   }
 
@@ -162,7 +166,8 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   }
 
   function enqueueAll() {
-    dispatch({ type: 'add', items: ready.flatMap((s) => itemsFor(s.preview, newId, s.split)) });
+    const onlyNew = settings.skipDownloaded;
+    dispatch({ type: 'add', items: ready.flatMap((s) => itemsFor(s.preview, newId, { split: s.split, onlyNew })) });
     clearPreviews();
   }
 
@@ -211,11 +216,11 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
                 type="button"
                 className="btn btn--primary"
                 onClick={enqueueAll}
-                disabled={previewing || ready.length === 0}
+                disabled={previewing || allCount === 0}
               >
                 <Download size={16} aria-hidden="true" />
                 <span>
-                  {t('previews.downloadAll', { count: ready.reduce((n, s) => n + trackCount(s.preview, s.split), 0) })}
+                  {t('previews.downloadAll', { count: allCount })}
                 </span>
               </button>
             </div>
@@ -229,7 +234,8 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
               profile={settings.profile}
               split={slot.split}
               onSplitChange={(split) => dispatchPreviews({ type: 'split', key: slot.key, split })}
-              onDownload={() => enqueue(slot.preview, slot.split, slot.key)}
+              skipDownloaded={settings.skipDownloaded}
+              onDownload={(onlyNew) => enqueue(slot.preview, slot.split, onlyNew, slot.key)}
               focusedTitle={focusedItem(slot.preview, slot.url, () => '')?.title ?? null}
               onDownloadFocused={() => enqueueFocused(slot.preview, slot.url, slot.key)}
               onClear={() => removePreview(slot.key)}
@@ -322,7 +328,7 @@ function useDownloadRunner(items: QueueItem[], dispatch: Dispatch<QueueAction>):
 
       const { id } = item;
       api
-        .download({ id, url: item.url, index: item.index, section: item.section }, ({ line }) => {
+        .download({ id, url: item.url, index: item.index, section: item.section, force: item.force }, ({ line }) => {
           if (cancelUnconfirmed.current.has(key)) requestCancel(id, key);
           const event = parseLine(line);
           if (!event) return;

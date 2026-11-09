@@ -1,4 +1,4 @@
-import { AlertCircle, Check, Download, Loader2, Music, RotateCcw, X } from 'lucide-react';
+import { AlertCircle, Check, CheckCheck, Download, Loader2, Music, RotateCcw, X } from 'lucide-react';
 import type { Translate } from '../i18n';
 import { useI18n } from '../i18n';
 import type { Lang } from '../lib/api';
@@ -25,6 +25,7 @@ export function Queue({ queue, onCancel, onRemove, onRetry, onCancelAll, onClear
   if (summary.running > 0) parts.push(t('queue.running', { count: summary.running }));
   if (summary.queued > 0) parts.push(t('queue.queued', { count: summary.queued }));
   if (summary.done > 0) parts.push(t('queue.done', { count: summary.done }));
+  if (summary.skipped > 0) parts.push(t('queue.skipped', { count: summary.skipped }));
   if (summary.failed > 0) parts.push(t('queue.failed', { count: summary.failed }));
 
   return (
@@ -104,13 +105,13 @@ function QueueRow({ item, onCancel, onRemove, onRetry }: RowProps) {
         {item.status === 'error' && item.error && <ErrorNote error={item.error} />}
       </div>
       <div className="queue-item__actions">
-        {(item.status === 'error' || item.status === 'canceled') && (
+        {(item.status === 'error' || item.status === 'canceled' || item.status === 'skipped') && (
           <button
             type="button"
             className="icon-btn"
             onClick={() => onRetry(item.id)}
-            aria-label={t('queue.retryItem', { title: item.title })}
-            title={t('queue.retryItem', { title: item.title })}
+            aria-label={t(item.status === 'skipped' ? 'queue.againItem' : 'queue.retryItem', { title: item.title })}
+            title={t(item.status === 'skipped' ? 'queue.againItem' : 'queue.retryItem', { title: item.title })}
           >
             <RotateCcw size={16} aria-hidden="true" />
           </button>
@@ -152,6 +153,8 @@ function StatusIcon({ item }: { item: QueueItem }) {
       return <Loader2 size={18} className="spin" />;
     case 'done':
       return <Check size={18} />;
+    case 'skipped':
+      return <CheckCheck size={18} />;
     case 'error':
       return <AlertCircle size={18} />;
     case 'canceled':

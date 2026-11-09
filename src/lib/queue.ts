@@ -8,7 +8,7 @@ import type { LineEvent } from './progress';
 
 export const MAX_CONCURRENT = 2;
 
-export type ItemStatus = 'queued' | 'downloading' | 'converting' | 'done' | 'error' | 'canceled';
+export type ItemStatus = 'queued' | 'downloading' | 'converting' | 'done' | 'skipped' | 'error' | 'canceled';
 
 export interface QueueItem {
   id: string;
@@ -18,6 +18,8 @@ export interface QueueItem {
   index: number | null;
   /** Chapter of the video this item downloads, or null for the whole video. */
   section: Chapter | null;
+  /** Download even if already in the history ("download again"). */
+  force: boolean;
   status: ItemStatus;
   /** 0..1, or null while unknown. */
   progress: number | null;
@@ -43,6 +45,7 @@ export interface NewItem {
   title: string;
   index: number | null;
   section?: Chapter | null;
+  force?: boolean;
 }
 
 export interface LineUpdate {
@@ -70,7 +73,9 @@ export function isRunning(item: QueueItem): boolean {
 }
 
 export function isFinished(item: QueueItem): boolean {
-  return item.status === 'done' || item.status === 'error' || item.status === 'canceled';
+  return (
+    item.status === 'done' || item.status === 'skipped' || item.status === 'error' || item.status === 'canceled'
+  );
 }
 
 /** Queued items that fit in the free slots, in queue order. */
@@ -84,16 +89,18 @@ export interface QueueSummary {
   queued: number;
   running: number;
   done: number;
+  skipped: number;
   failed: number;
   canceled: number;
 }
 
 export function summarize(state: QueueState): QueueSummary {
-  const s: QueueSummary = { queued: 0, running: 0, done: 0, failed: 0, canceled: 0 };
+  const s: QueueSummary = { queued: 0, running: 0, done: 0, skipped: 0, failed: 0, canceled: 0 };
   for (const item of state.items) {
     if (item.status === 'queued') s.queued++;
     else if (isRunning(item)) s.running++;
     else if (item.status === 'done') s.done++;
+    else if (item.status === 'skipped') s.skipped++;
     else if (item.status === 'error') s.failed++;
     else s.canceled++;
   }
@@ -159,6 +166,7 @@ export function queueReducer(state: QueueState, action: QueueAction): QueueState
         .map((n) => ({
           ...n,
           section: n.section ?? null,
+          force: n.force ?? false,
           status: 'queued',
           progress: null,
           speed: null,
@@ -195,6 +203,9 @@ export function queueReducer(state: QueueState, action: QueueAction): QueueState
         const { status, stderr } = action.outcome;
         if (status === 'success') {
           return { ...item, status: 'done', progress: 1, speed: null, eta: null, cancelRequested: false };
+        }
+        if (status === 'skipped') {
+          return { ...item, status: 'skipped', progress: null, speed: null, eta: null, cancelRequested: false };
         }
         if (status === 'canceled' || item.cancelRequested) {
           return { ...item, status: 'canceled', speed: null, eta: null, cancelRequested: false };
@@ -250,10 +261,11 @@ export function queueReducer(state: QueueState, action: QueueAction): QueueState
     }
 
     case 'retry':
-      return update(state, action.id, (item) =>
-        item.status === 'error' || item.status === 'canceled'
-          ? { ...freshRun(item), status: 'queued' }
-          : item,
-      );
+      return update(state, action.id, (item) => {
+        if (item.status === 'error' || item.status === 'canceled') return { ...freshRun(item), status: 'queued' };
+        // "Download again" for a song the history skipped.
+        if (item.status === 'skipped') return { ...freshRun(item), status: 'queued', force: true };
+        return item;
+      });
   }
 }

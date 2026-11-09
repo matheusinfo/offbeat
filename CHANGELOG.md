@@ -21,6 +21,7 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - **Só esta faixa.** Um link de música tocada dentro de uma playlist (`watch?v=…&list=…`) continua mostrando a lista inteira, mas agora com o botão **Só esta faixa**, que baixa apenas aquela música.
 - **Volume igual em todas as músicas.** Opção nas Configurações que ajusta cada faixa ao mesmo volume (-14 LUFS, o padrão dos serviços de streaming), na mesma conversão para MP3, sem arquivo maior. Não vale para o perfil Original, que não recodifica.
 - **Dividir vídeos por capítulos.** Vídeos longos com capítulos (mixes, sets, álbuns completos) podem virar uma faixa por capítulo, com o nome do capítulo, número e o nome do vídeo como álbum. Cada capítulo baixa só o seu trecho.
+- **Pular músicas já baixadas.** O Offbeat guarda um histórico do que baixou. Numa playlist, a pré-visualização marca as músicas que já vieram e oferece **Baixar N novas**; na fila, uma música pulada aparece como "Já baixada antes" e pode ser baixada de novo. Opção nas Configurações (ligada), com o tamanho do histórico e **Apagar histórico**.
 
 ### Correções
 

@@ -78,13 +78,21 @@ export function isLoading(state: PreviewsState): boolean {
   return state.slots.some((s) => s.state === 'loading');
 }
 
+export interface ItemsOptions {
+  /** One item per chapter, for a video that has them. */
+  split?: boolean;
+  /** Leave out songs already in the history (sync). Chapters are never left out. */
+  onlyNew?: boolean;
+}
+
 /**
  * Queue items for a preview: one per playlist track, numbered by position.
- * A video split by chapters gives one numbered item per chapter.
+ * A video split by chapters gives one numbered item per chapter. Songs in
+ * the history that are queued anyway are forced ("download again").
  */
-export function itemsFor(preview: Preview, newId: () => string, split = false): NewItem[] {
+export function itemsFor(preview: Preview, newId: () => string, opts: ItemsOptions = {}): NewItem[] {
   if (preview.kind === 'video') {
-    if (split && canSplit(preview)) {
+    if (opts.split && canSplit(preview)) {
       return preview.chapters.map((c, i) => ({
         id: newId(),
         url: preview.url,
@@ -93,9 +101,20 @@ export function itemsFor(preview: Preview, newId: () => string, split = false): 
         section: c,
       }));
     }
-    return [{ id: newId(), url: preview.url, title: preview.title, index: null }];
+    const downloaded = preview.entries[0]?.downloaded ?? false;
+    if (downloaded && opts.onlyNew) return [];
+    return [{ id: newId(), url: preview.url, title: preview.title, index: null, force: downloaded }];
   }
-  return preview.entries.map((e, i) => ({ id: newId(), url: e.url, title: e.title, index: i + 1 }));
+  return preview.entries.flatMap((e, i) =>
+    e.downloaded && opts.onlyNew
+      ? []
+      : [{ id: newId(), url: e.url, title: e.title, index: i + 1, force: e.downloaded }],
+  );
+}
+
+/** Songs of a preview already in the history (chapters don't count). */
+export function downloadedCount(preview: Preview): number {
+  return preview.entries.filter((e) => e.downloaded).length;
 }
 
 /** The single track a list link was opened on, as a queue item without a number. */
@@ -103,10 +122,9 @@ export function focusedItem(preview: Preview, sourceUrl: string, newId: () => st
   if (preview.kind !== 'playlist') return null;
   const id = focusedVideoId(sourceUrl);
   const entry = id === null ? undefined : preview.entries.find((e) => e.id === id);
-  return entry ? { id: newId(), url: entry.url, title: entry.title, index: null } : null;
+  return entry ? { id: newId(), url: entry.url, title: entry.title, index: null, force: entry.downloaded } : null;
 }
 
-export function trackCount(preview: Preview, split = false): number {
-  if (preview.kind === 'playlist') return preview.entries.length;
-  return split && canSplit(preview) ? preview.chapters.length : 1;
+export function trackCount(preview: Preview, opts: ItemsOptions = {}): number {
+  return itemsFor(preview, () => '', opts).length;
 }

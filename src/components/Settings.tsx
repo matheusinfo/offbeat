@@ -22,6 +22,7 @@ const PROFILES: Profile[] = ['original', 'balanced', 'economy'];
 const PATTERNS: FilenamePattern[] = ['title', 'artist-title'];
 
 type Versions = { state: 'loading' } | { state: 'failed' } | { state: 'ok'; value: ToolVersions };
+type History = { state: 'loading' } | { state: 'failed' } | { state: 'ok'; count: number; cleared: boolean };
 
 /** Mounted only while open; the native <dialog> gives focus trapping and Esc. */
 export function Settings({ settings, onClose, onSaved }: Props) {
@@ -33,6 +34,7 @@ export function Settings({ settings, onClose, onSaved }: Props) {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string[] | null>(null);
   const [versions, setVersions] = useState<Versions>({ state: 'loading' });
+  const [history, setHistory] = useState<History>({ state: 'loading' });
 
   // No close() on cleanup: it fires an async "close" event, and under
   // StrictMode (mount, unmount, mount) that event lands after the remount and
@@ -53,6 +55,27 @@ export function Settings({ settings, onClose, onSaved }: Props) {
       alive = false;
     };
   }, []);
+
+  useEffect(() => {
+    let alive = true;
+    api
+      .historyCount()
+      .then((count) => alive && setHistory({ state: 'ok', count, cleared: false }))
+      .catch(() => alive && setHistory({ state: 'failed' }));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Takes effect at once: the history is not one of the saved settings.
+  async function clearHistory() {
+    try {
+      await api.clearHistory();
+      setHistory({ state: 'ok', count: 0, cleared: true });
+    } catch {
+      setHistory({ state: 'failed' });
+    }
+  }
 
   function patch(change: Partial<SettingsData>) {
     setDraft((d) => ({ ...d, ...change }));
@@ -193,6 +216,33 @@ export function Settings({ settings, onClose, onSaved }: Props) {
                 </span>
               </span>
             </label>
+          </div>
+
+          <div className="field">
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={draft.skipDownloaded}
+                onChange={(e) => patch({ skipDownloaded: e.target.checked })}
+              />
+              <span>
+                <span className="checkbox__label">{t('settings.skipDownloaded')}</span>
+                <span className="hint">{t('settings.skipDownloadedHint')}</span>
+              </span>
+            </label>
+            <div className="settings__history" aria-live="polite">
+              <p className="hint">
+                {history.state === 'loading' && t('settings.historyLoading')}
+                {history.state === 'failed' && t('settings.historyFailed')}
+                {history.state === 'ok' &&
+                  (history.cleared ? t('settings.historyCleared') : t('settings.historyCount', { count: history.count }))}
+              </p>
+              {history.state === 'ok' && history.count > 0 && (
+                <button type="button" className="btn btn--ghost" onClick={() => void clearHistory()}>
+                  {t('settings.historyClear')}
+                </button>
+              )}
+            </div>
           </div>
 
           <fieldset className="field">

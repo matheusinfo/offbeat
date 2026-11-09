@@ -447,6 +447,26 @@ input[type='checkbox'] {
   white-space: nowrap;
 }
 
+.preview__track-done {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  color: var(--success);
+}
+
+.preview__history {
+  font-size: 13px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .preview__focused {
   font-size: 13px;
 }
@@ -562,6 +582,7 @@ input[type='checkbox'] {
   color: var(--accent-text);
 }
 
+.queue-item--skipped .queue-item__icon,
 .queue-item--done .queue-item__icon {
   color: var(--success);
 }
@@ -768,6 +789,15 @@ legend.field-label {
 .checkbox__label {
   display: block;
   font-weight: 550;
+}
+
+.settings__history {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  padding-left: 26px;
 }
 
 .settings__about .field-label {

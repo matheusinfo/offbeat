@@ -1,5 +1,7 @@
+use crate::error::AppResult;
+use crate::history;
 use crate::settings::Settings;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -11,6 +13,8 @@ pub struct Paths {
     pub settings_file: PathBuf,
     /// ~/.cache/offbeat/tmp; one subfolder per running download.
     pub temp_root: PathBuf,
+    /// ~/.local/share/offbeat/history.txt, in yt-dlp's archive format.
+    pub history_file: PathBuf,
 }
 
 /// Cancellation handle of a running download.
@@ -34,6 +38,8 @@ pub struct AppState {
     pub paths: Paths,
     settings: Mutex<Settings>,
     jobs: Mutex<HashMap<String, Arc<Job>>>,
+    /// Ids of downloaded videos; mirrors history_file.
+    history: Mutex<HashSet<String>>,
 }
 
 // A panic while holding a lock must not take every later command down with it.
@@ -43,11 +49,40 @@ fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
 
 impl AppState {
     pub fn new(paths: Paths, settings: Settings) -> Self {
+        let history = history::load(&paths.history_file);
         Self {
             paths,
             settings: Mutex::new(settings),
             jobs: Mutex::new(HashMap::new()),
+            history: Mutex::new(history),
         }
+    }
+
+    pub fn is_downloaded(&self, id: &str) -> bool {
+        lock(&self.history).contains(id)
+    }
+
+    /// Appends under the lock, so two downloads finishing together never
+    /// interleave their lines.
+    pub fn record_download(&self, id: &str) -> AppResult<()> {
+        let mut ids = lock(&self.history);
+        if ids.contains(id) {
+            return Ok(());
+        }
+        history::append(&self.paths.history_file, id)?;
+        ids.insert(id.to_owned());
+        Ok(())
+    }
+
+    pub fn history_count(&self) -> usize {
+        lock(&self.history).len()
+    }
+
+    pub fn clear_history(&self) -> AppResult<()> {
+        let mut ids = lock(&self.history);
+        history::clear(&self.paths.history_file)?;
+        ids.clear();
+        Ok(())
     }
 
     pub fn settings(&self) -> Settings {

@@ -22,6 +22,7 @@ O React só fala com o backend por comandos do Tauri e, durante um download, por
 | `get_settings` / `save_settings` | `{ settings }` | `Settings` | lê ou valida e grava as configurações |
 | `open_output_dir` | | | cria a pasta se preciso e abre no gerenciador de arquivos |
 | `output_dir_size` | | `number` | soma dos arquivos diretamente na pasta de saída |
+| `history_count` / `clear_history` | | `number` / | tamanho do histórico de downloads; apagá-lo |
 | `tool_versions` | | `ToolVersions` | versões de yt-dlp, ffmpeg e Deno (ou `null`) |
 
 Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `api.ts` e o front os traduz em [src/lib/errors.ts](../src/lib/errors.ts).
@@ -34,6 +35,16 @@ Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `
 4. Para cada item, `download` roda um yt-dlp com `--no-playlist` na URL da faixa. Um processo por faixa dá progresso, cancelamento, erro e "tentar de novo" por faixa.
 5. As linhas chegam pelo `Channel`; [progress.ts](../src/lib/progress.ts) interpreta `PROG`, `POST` e `DONE` (formato em [ytdlp.md](ytdlp.md#linhas-de-progresso)). As atualizações são agrupadas por quadro de animação.
 6. Quando o comando resolve, o item vira `done`, `error` ou `canceled`. Ao esvaziar a fila, o rodapé atualiza o total da pasta e mostra "Abrir pasta".
+
+## Histórico de downloads
+
+[history.rs](../src-tauri/src/history.rs) guarda em `~/.local/share/offbeat/history.txt` o id de cada vídeo baixado, no formato do `--download-archive` do yt-dlp (`youtube <id>`). Quem cuida do arquivo é o backend, não o yt-dlp, para poder:
+
+- **pular antes de lançar qualquer processo**: com `skipDownloaded` ligado e sem `force`, `download` devolve `status: "skipped"` na hora;
+- **deixar capítulos de fora**: um capítulo é parte de um vídeo e nem conta como o vídeo baixado, nem é pulado por causa dele;
+- **baixar de novo** com `force: true` (botão "Baixar de novo" e o ↻ de um item pulado).
+
+O id sai da URL da faixa (`watch?v=`, `youtu.be/`, `shorts/`). Um download com `success` acrescenta a linha, sob o mesmo lock que o conjunto em memória, então dois downloads terminando juntos não misturam linhas. O histórico é gravado mesmo com a opção desligada, para valer quando ela for ligada. `preview` marca `downloaded` em cada entrada; com a opção ligada, a pré-visualização oferece "Baixar N novas" e põe na fila só essas, mantendo os números das posições.
 
 ## Cancelamento e processos
 
@@ -54,6 +65,7 @@ Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `
 | `filenamePattern` | `title`, `artist-title` | `title` |
 | `sponsorblock` | booleano | `false` |
 | `normalizeVolume` | booleano (ignorado no perfil `original`) | `false` |
+| `skipDownloaded` | booleano | `true` |
 | `language` | `pt-BR`, `en-US`, `null` (sistema) | `null` |
 
 - Leitura campo a campo: um valor inválido volta ao padrão sem zerar o resto.

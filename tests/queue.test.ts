@@ -143,7 +143,7 @@ describe('queue reducer', () => {
       ['canceled', false],
       ['canceled', false],
     ]);
-    expect(summarize(s)).toEqual({ queued: 0, running: 1, done: 0, failed: 0, canceled: 2 });
+    expect(summarize(s)).toEqual({ queued: 0, running: 1, done: 0, skipped: 0, failed: 0, canceled: 2 });
   });
 
   it('retries with a new attempt and ignores events from the old one', () => {
@@ -184,5 +184,17 @@ describe('queue reducer', () => {
     s = run([{ type: 'clearFinished' }], s);
     expect(s.items.map((i) => i.id)).toEqual(['b', 'c']);
     expect(isIdleWithResults(s)).toBe(false);
+  });
+});
+
+describe('skipped songs', () => {
+  it('marks a song the history skipped and downloads it again on retry', () => {
+    let s = run([add('a'), { type: 'start', id: 'a' }]);
+    s = run([{ type: 'finished', id: 'a', attempt: 1, outcome: outcome('skipped') }], s);
+    expect(item(s, 'a')).toMatchObject({ status: 'skipped', force: false });
+    expect(summarize(s)).toMatchObject({ skipped: 1, done: 0 });
+    expect(selectStartable(s)).toEqual([]);
+    s = run([{ type: 'retry', id: 'a' }], s);
+    expect(item(s, 'a')).toMatchObject({ status: 'queued', force: true });
   });
 });

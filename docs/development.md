@@ -70,7 +70,7 @@ Para testar sem tocar nas suas configurações nem na sua pasta Música, rode co
 | `~/.config/offbeat/settings.json` | Configurações (pasta, perfil, nome do arquivo, SponsorBlock, idioma) |
 | `~/.cache/offbeat/tmp/<id>/` | Arquivos temporários de cada download. Apagada ao terminar, ao cancelar e ao abrir o app |
 | `~/Música/Offbeat/` (padrão) | Saída: a pasta de música do sistema (`XDG_MUSIC_DIR`, que pode ser `~/Músicas` ou `~/Music`) + `Offbeat` |
-| `~/.local/share/offbeat/` | Reservado para o histórico (`--download-archive`) e o yt-dlp atualizado, ainda não usados |
+| `~/.local/share/offbeat/history.txt` | Histórico de downloads, no formato do `--download-archive` do yt-dlp (`youtube <id>` por linha) |
 
 ## Empacotamento
 

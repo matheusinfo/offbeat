@@ -21,6 +21,8 @@ export interface Settings {
   sponsorblock: boolean;
   /** Same loudness for every track; ignored by the Original profile (no re-encode). */
   normalizeVolume: boolean;
+  /** Skip videos already in the download history. */
+  skipDownloaded: boolean;
   /** null follows the system language. */
   language: Lang | null;
 }
@@ -33,6 +35,8 @@ export interface PreviewEntry {
   uploader: string | null;
   /** Seconds. */
   duration: number | null;
+  /** Already in the download history (~/.local/share/offbeat/history.txt). */
+  downloaded: boolean;
 }
 
 /** A chapter of a video, or the part of it a download is limited to. */
@@ -67,6 +71,8 @@ export interface DownloadRequest {
   index: number | null;
   /** Download only this chapter, named and tagged as its own track. */
   section: Chapter | null;
+  /** Download even if the video is in the history. */
+  force: boolean;
 }
 
 /** Raw output line from yt-dlp (stdout or stderr); parsed in lib/progress.ts. */
@@ -76,7 +82,8 @@ export type DownloadEvent = {
 };
 
 export interface DownloadOutcome {
-  status: 'success' | 'failed' | 'canceled';
+  /** skipped: already in the history (and skipDownloaded is on); nothing ran. */
+  status: 'success' | 'failed' | 'canceled' | 'skipped';
   exitCode: number | null;
   /** Last stderr lines (at most 30), for lib/errors.ts. */
   stderr: string[];
@@ -136,4 +143,9 @@ export const api = {
   outputDirSize: () => invoke<number>('output_dir_size'),
 
   toolVersions: () => invoke<ToolVersions>('tool_versions'),
+
+  /** Number of videos in the download history. */
+  historyCount: () => invoke<number>('history_count'),
+
+  clearHistory: () => invoke<void>('clear_history'),
 };
