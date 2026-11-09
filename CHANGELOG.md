@@ -24,6 +24,7 @@ Primeira versão: o MVP do [planejamento](docs/planning.md).
 - **Pular músicas já baixadas.** O Offbeat guarda um histórico do que baixou. Numa playlist, a pré-visualização marca as músicas que já vieram e oferece **Baixar N novas**; na fila, uma música pulada aparece como "Já baixada antes" e pode ser baixada de novo. Opção nas Configurações (ligada), com o tamanho do histórico e **Apagar histórico**.
 - **Playlists salvas.** **Salvar playlist** na pré-visualização guarda a playlist; em **Playlists salvas**, **Sincronizar** (ou **Sincronizar todas**) põe na fila só as músicas que ainda não foram baixadas.
 - **Atualizar o yt-dlp pelo app.** Botão nas Configurações (*Sobre*) que atualiza o yt-dlp com o atualizador dele mesmo, conferido pela lista SHA-256 do release, sem reinstalar o Offbeat. As mensagens de erro de bloqueio e HTTP 403 apontam para ele. É o único acesso à rede do próprio app, e só acontece no clique.
+- **Aviso de fila concluída.** Quando os downloads terminam com a janela em segundo plano, o sistema mostra uma notificação com quantas músicas ficaram prontas (e quantas deram erro).
 
 ### Correções
 

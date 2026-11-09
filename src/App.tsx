@@ -20,6 +20,8 @@ import {
 import { formatBytes } from './lib/format';
 import { parseLine } from './lib/progress';
 import {
+  batchResult,
+  hasPending,
   initialQueue,
   isIdleWithResults,
   queueReducer,
@@ -28,6 +30,7 @@ import {
   type LineUpdate,
   type QueueAction,
   type QueueItem,
+  type QueueSummary,
 } from './lib/queue';
 
 /** Previews asked of yt-dlp at the same time when several links are pasted. */
@@ -119,7 +122,9 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
   const [folderSize, setFolderSize] = useState<number | null>(null);
   const [openFailed, setOpenFailed] = useState(false);
   const idleWithResults = isIdleWithResults(queue);
-  const doneCount = summarize(queue).done;
+  const summary = summarize(queue);
+  const doneCount = summary.done;
+  useFinishedNotice(summary);
 
   // Folder total: at startup, when the folder changes and after every finished
   // track. Waiting for the whole batch left it at the startup value (often
@@ -341,6 +346,33 @@ function Main({ settings, onSettingsChange }: { settings: SettingsData; onSettin
       )}
     </div>
   );
+}
+
+/**
+ * Tells the desktop when a batch of downloads ends while the window is not
+ * in focus, so a long playlist can finish in the background.
+ */
+function useFinishedNotice(summary: QueueSummary): void {
+  const { t } = useI18n();
+  const start = useRef<QueueSummary | null>(null);
+  const pending = hasPending(summary);
+
+  useEffect(() => {
+    if (pending) {
+      start.current ??= summary;
+      return;
+    }
+    if (start.current === null) return;
+    const result = batchResult(start.current, summary);
+    start.current = null;
+    if (document.hasFocus() || result.done + result.failed === 0) return;
+    const parts: string[] = [];
+    if (result.done > 0) parts.push(t('notify.done', { count: result.done }));
+    if (result.failed > 0) parts.push(t('notify.failed', { count: result.failed }));
+    api.notify(t('notify.title'), parts.join(' · ')).catch(() => {
+      // No notification service: the queue on screen already tells it all.
+    });
+  }, [pending, summary, t]);
 }
 
 /** Starts queued items as slots free up and sends cancels for items marked for it. */

@@ -18,6 +18,7 @@ Critério: valor para quem leva música ao relógio × esforço, mantendo o app 
 - Histórico de downloads: pular o que já foi baixado, "Baixar N novas" e "Baixar de novo"
 - Playlists salvas com "Sincronizar", que põe na fila só as músicas novas
 - Atualizar o yt-dlp pelo app (cópia em `~/.local/share/offbeat/bin/`, atualizada com `yt-dlp -U`)
+- Notificação do sistema quando a fila termina com a janela em segundo plano
 
 ## Pendente
 

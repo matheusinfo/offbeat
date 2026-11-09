@@ -25,6 +25,7 @@ O React só fala com o backend por comandos do Tauri e, durante um download, por
 | `history_count` / `clear_history` | | `number` / | tamanho do histórico de downloads; apagá-lo |
 | `list_playlists` / `save_playlist` / `remove_playlist` | `{ playlist: {url, title} }` / `{ url }` | `SavedPlaylist[]` | playlists salvas; gravar e remover devolvem a lista atualizada |
 | `tool_versions` | | `ToolVersions` | versões do yt-dlp em uso, do ffmpeg e do Deno (ou `null`) |
+| `notify` | `{ title, body }` | | notificação do sistema pelo D-Bus (`org.freedesktop.Notifications`), só texto simples; o front chama quando um lote termina sem a janela em foco |
 | `update_ytdlp` | | `UpdateOutcome` | atualiza o yt-dlp (veja [ytdlp.md](ytdlp.md#atualizar-o-yt-dlp)); `busy` se já houver uma atualização rodando |
 
 Todos rejeitam com `AppError { code, message, detail }`. Os códigos estão em `api.ts` e o front os traduz em [src/lib/errors.ts](../src/lib/errors.ts).

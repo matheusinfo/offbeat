@@ -98,6 +98,10 @@ export const ptBR = {
   'status.skipped': 'Já baixada antes (pulada)',
   'status.canceling': 'Cancelando…',
 
+  'notify.title': 'Offbeat: downloads concluídos',
+  'notify.done': '{count} músicas prontas',
+  'notify.failed': '{count} com erro',
+
   'footer.folder': 'Pasta: {size}',
   'footer.openFolder': 'Abrir pasta',
   'footer.openFailed': 'Não foi possível abrir a pasta.',

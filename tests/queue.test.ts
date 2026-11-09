@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import type { DownloadOutcome } from '../src/lib/api';
 import {
+  batchResult,
+  hasPending,
   initialQueue,
   isIdleWithResults,
   queueReducer,
@@ -196,5 +198,22 @@ describe('skipped songs', () => {
     expect(selectStartable(s)).toEqual([]);
     s = run([{ type: 'retry', id: 'a' }], s);
     expect(item(s, 'a')).toMatchObject({ status: 'queued', force: true });
+  });
+});
+
+describe('batch result', () => {
+  it('counts what a batch produced, never below zero', () => {
+    const s = (done: number, failed: number, skipped = 0) => ({
+      queued: 0,
+      running: 0,
+      done,
+      skipped,
+      failed,
+      canceled: 0,
+    });
+    expect(batchResult(s(2, 0), s(7, 1, 3))).toEqual({ done: 5, failed: 1, skipped: 3 });
+    expect(batchResult(s(5, 2), s(1, 0))).toEqual({ done: 0, failed: 0, skipped: 0 });
+    expect(hasPending({ ...s(0, 0), queued: 1 })).toBe(true);
+    expect(hasPending(s(3, 0))).toBe(false);
   });
 });

@@ -163,6 +163,9 @@ export const api = {
    */
   updateYtdlp: () => invoke<UpdateOutcome>('update_ytdlp'),
 
+  /** Desktop notification (plain text) through the system's notification service. */
+  notify: (title: string, body: string) => invoke<void>('notify', { title, body }),
+
   /** Number of videos in the download history. */
   historyCount: () => invoke<number>('history_count'),
 

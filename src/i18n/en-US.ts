@@ -97,6 +97,10 @@ export const enUS: Record<MessageKey, string> = {
   'status.skipped': 'Downloaded before (skipped)',
   'status.canceling': 'Canceling…',
 
+  'notify.title': 'Offbeat: downloads finished',
+  'notify.done': '{count} songs ready',
+  'notify.failed': '{count} failed',
+
   'footer.folder': 'Folder: {size}',
   'footer.openFolder': 'Open folder',
   'footer.openFailed': 'Could not open the folder.',

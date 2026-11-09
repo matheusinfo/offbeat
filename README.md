@@ -82,6 +82,8 @@ Offbeat shows the cover, the name, how many songs there are, how long they last 
 
 Each song gets its own line with a progress bar. Two songs download at the same time; the rest wait their turn. **Converting…** means the song is downloaded and is being turned into a small MP3. At the bottom, **Folder** shows how much space your music already takes.
 
+Feel free to do something else: if the Offbeat window isn't in front when everything finishes, a **system notification** tells you how many songs are ready.
+
 Changed your mind? The **✕** on a line cancels that song, and **Cancel all** stops everything. If a song fails, the **↻** button tries again.
 
 <p align="center"><img src="docs/images/downloading-en.png" width="380" alt="Songs downloading, some already done" /></p>

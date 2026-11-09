@@ -82,6 +82,8 @@ O Offbeat mostra a capa, o nome, quantas músicas são, quanto tempo duram e **q
 
 Cada música ganha uma linha com uma barra de progresso. Duas músicas baixam ao mesmo tempo; as outras esperam a vez. **Convertendo…** quer dizer que a música já baixou e está virando um MP3 pequeno. Embaixo, **Pasta** mostra quanto espaço suas músicas já ocupam.
 
+Pode ir fazer outra coisa: se a janela do Offbeat não estiver em primeiro plano quando tudo terminar, aparece um **aviso do sistema** dizendo quantas músicas ficaram prontas.
+
 Mudou de ideia? O **✕** de uma linha cancela aquela música, e **Cancelar tudo** para tudo. Se uma música falhar, o botão **↻** tenta de novo.
 
 <p align="center"><img src="docs/images/downloading-pt.png" width="380" alt="Músicas baixando, algumas já concluídas" /></p>

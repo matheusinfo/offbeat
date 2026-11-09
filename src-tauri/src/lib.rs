@@ -1,6 +1,7 @@
 mod downloads;
 mod error;
 mod history;
+mod notify;
 mod playlists;
 mod process;
 mod settings;
@@ -77,6 +78,7 @@ pub fn run() {
             settings::save_settings,
             sidecar::tool_versions,
             updater::update_ytdlp,
+            notify::notify,
         ])
         .build(tauri::generate_context!());
     let app = match app {

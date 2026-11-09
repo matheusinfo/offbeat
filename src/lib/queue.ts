@@ -107,6 +107,29 @@ export function summarize(state: QueueState): QueueSummary {
   return s;
 }
 
+export function hasPending(s: QueueSummary): boolean {
+  return s.running + s.queued > 0;
+}
+
+export interface BatchResult {
+  done: number;
+  failed: number;
+  skipped: number;
+}
+
+/**
+ * What a batch produced, from the summaries when it started (pending went
+ * from 0 to more) and when it ended. Items cleared in between can make a
+ * difference negative; those count as 0.
+ */
+export function batchResult(start: QueueSummary, end: QueueSummary): BatchResult {
+  return {
+    done: Math.max(0, end.done - start.done),
+    failed: Math.max(0, end.failed - start.failed),
+    skipped: Math.max(0, end.skipped - start.skipped),
+  };
+}
+
 /** "Open folder" is offered once something finished and nothing is pending. */
 export function isIdleWithResults(state: QueueState): boolean {
   const s = summarize(state);
